@@ -1,19 +1,141 @@
-# React + Vite
+# Profil Desa & Direktori UMKM — Kesepakatan Kerja FE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dokumen kesepakatan tim frontend. Versi 1, 3 November 2026.
+Kalau ada yang berubah, ubah file ini dan kabari yang lain — jangan biarkan
+kesepakatan hanya ada di chat.
 
-Currently, two official plugins are available:
+## 1. Tim & pembagian
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Area | Pemilik | Isi |
+|---|---|---|
+| Desa & layout | FE A (Radhitya) | Navbar, Footer, Beranda, Profil Desa, style global |
+| UMKM | FE B (Naufal) | Direktori, Detail, Daftar UMKM, UmkmCard, data & API |
 
-## React Compiler
+Aturan: satu file hanya diedit pemiliknya. Butuh perubahan di file orang lain?
+Minta lewat PR atau chat, jangan edit langsung.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 2. Struktur folder
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+```
+frontend/
+  public/
+    images/              # placeholder foto & logo, nama file = slug
+  src/
+    main.jsx             # entry, jangan diubah
+    App.jsx              # routes + Navbar/Footer (milik FE A)
+    index.css            # style global (milik FE A)
+    pages/
+      Beranda.jsx
+      ProfilDesa.jsx
+      DirektoriUmkm.jsx
+      DetailUmkm.jsx
+      DaftarUmkm.jsx
+      NotFound.jsx
+    components/
+      Navbar.jsx
+      Footer.jsx
+      UmkmCard.jsx
+    data/
+      umkm.js            # data placeholder (milik FE B)
+      profil.js          # teks placeholder (milik FE B)
+    api/
+      umkm.js            # getUmkmList(), getUmkmBySlug()
+      profil.js          # getProfil()
+```
 
-## Expanding the ESLint configuration
+## 3. URL map
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| URL | Halaman |
+|---|---|
+| `/` | Beranda |
+| `/profil` | Profil Desa |
+| `/umkm` | Direktori UMKM |
+| `/umkm/:slug` | Detail UMKM |
+| `/daftar-umkm` | Form Daftar UMKM |
+
+## 4. Kontrak data (ringkas)
+
+- Semua halaman mengambil data lewat `src/api/`, **bukan** langsung dari `src/data/`.
+- Bentuk objek UMKM v1:
+
+```json
+{
+  "id": 1,
+  "slug": "kopi-sabah-balau",
+  "name": "Kopi Sabah Balau",
+  "category": "Kuliner",
+  "owner": "Ibu Sari",
+  "dusun": "Dusun 1",
+  "whatsapp": "62812xxxxxxx",
+  "imageUrl": "/images/kopi-sabah-balau.jpg",
+  "description": "Kopi robusta hasil kebun warga."
+}
+```
+
+- `slug` unik, huruf kecil, pakai tanda hubung. Contoh: `kopi-sabah-balau`.
+- Detail kontrak (endpoint, error, field opsional): `docs/api-contract.md` — draft oleh FE B.
+
+## 5. Konvensi kode
+
+- Nama file komponen & halaman: PascalCase (`UmkmCard.jsx`).
+- Style: CSS Modules per komponen (`UmkmCard.module.css`). Jangan pakai nama class global.
+- Data placeholder harus realistis (bukan lorem ipsum), termasuk kasus aneh: tanpa foto, nama panjang.
+- Gambar di `public/images/`, nama file = slug.
+- Jangan install UI kit / Tailwind dulu; tunggu arah desain.
+
+## 6. File bersama (satu pemilik)
+
+| File | Pemilik |
+|---|---|
+| `App.jsx` (routes) | FE A |
+| `index.css` & style global | FE A |
+| `src/data/*`, `src/api/*` | FE B |
+| `docs/api-contract.md` | FE B (disetujui berdua) |
+| `package.json`, `package-lock.json` | siapa pun yang install, setelah kabari |
+
+Menambah/mengubah route: minta FE A.
+
+## 7. Alur git
+
+- Satu branch per tugas: `feat/halaman-beranda`, `feat/direktori-umkm`, dst.
+- Commit kecil, pesan bahasa Indonesia huruf kecil. Contoh: `tambah halaman direktori umkm`.
+- Push branch → buka PR → dibaca & merge oleh orang lain. Jangan push langsung ke `main`.
+- Selalu `git pull` sebelum mulai kerja.
+- Jangan commit `node_modules`, `dist`, atau file `.env*`.
+
+## 8. Dependency
+
+- Kabari dulu sebelum `npm install` apa pun.
+- Satu orang install, lalu commit `package.json` + `package-lock.json`.
+- Yang lain pull, lalu jalankan `npm install` sebelum lanjut kerja.
+
+## 9. Cara menjalankan
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## 10. Keputusan yang belum final
+
+- [ ] Handoff desain Figma 
+- [ ] Target submit Daftar UMKM
+- [ ] Hosting & domain
+- [ ] Data & konten asli
+
+## 11. Urutan pengerjaan
+
+1. Skeleton: 5 route + Navbar/Footer — FE A
+2. Data placeholder — FE B
+3. Direktori UMKM → Detail UMKM — FE B
+4. Beranda — FE A
+5. Profil Desa — FE A
+6. Daftar UMKM — FE B, setelah target submit diputuskan
+
+## 12. Definisi selesai (ringkas)
+
+- Semua halaman bisa diakses dan tampil rapi di HP.
+- Data placeholder sudah diganti data asli.
+- Tidak ada error di console browser.
+- `npm run build` sukses.
