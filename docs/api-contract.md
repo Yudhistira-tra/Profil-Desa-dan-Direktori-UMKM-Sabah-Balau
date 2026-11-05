@@ -1,6 +1,6 @@
 # Kontrak API — Profil Desa & Direktori UMKM
 
-Versi 0 (draft), 3 November 2026. Pemilik dokumen: FE B.
+Versi 3, 5 November 2026. Pemilik dokumen: FE B.
 Status: **belum dikonfirmasi backend.** Setelah backend setuju (atau minta
 revisi), perbarui file ini dan catat di bagian Changelog.
 
@@ -19,12 +19,14 @@ menentukan cara menyimpan, selama bentuk respons sesuai kesepakatan di sini.
 - Autentikasi: belum ada. Semua endpoint publik.
 - CORS: harus mengizinkan `http://localhost:5173` dan domain produksi nanti.
 - Identitas UMKM memakai `slug` di URL, bukan `id`.
+- **Kategori UMKM dihapus total** (keputusan desain, 5 November 2026):
+  tidak ada field `category` dan tidak ada badge kategori di kartu.
 
 ## 1. GET /api/umkm
 
 Daftar semua UMKM yang sudah disetujui, urut nama A–Z.
-Tanpa pagination dan tanpa query param untuk versi ini (jumlah UMKM < 100).
-Pencarian dan filter kategori dilakukan di sisi frontend.
+Tanpa query param. Pencarian dilakukan di sisi frontend (nama dan deskripsi).
+Pagination dilakukan di frontend: 8 kartu per halaman.
 
 Respons `200`:
 
@@ -35,12 +37,25 @@ Respons `200`:
       "id": 1,
       "slug": "kopi-sabah-balau",
       "name": "Kopi Sabah Balau",
-      "category": "Kuliner",
       "owner": "Ibu Sari",
-      "dusun": "Dusun 1",
+      "ownerSince": 2012,
+      "address": "Jl. Raya Sabah Balau, Dusun 1",
+      "mapsUrl": "https://maps.app.goo.gl/xxxx",
       "whatsapp": "6281234567890",
-      "imageUrl": "https://api.example.com/storage/umkm/kopi-sabah-balau.jpg",
-      "description": "Kopi robusta hasil kebun warga, digiling manual."
+      "priceMin": 5000,
+      "openingHours": "Setiap hari, 08.00–22.00 WIB",
+      "description": "Kopi robusta hasil kebun warga, digiling manual.",
+      "images": [
+        "https://api.example.com/storage/umkm/kopi-sabah-balau-1.jpg",
+        "https://api.example.com/storage/umkm/kopi-sabah-balau-2.jpg"
+      ],
+      "products": [
+        {
+          "name": "Kopi Bubuk 250 gram",
+          "description": "Robusta giling halus",
+          "price": 15000
+        }
+      ]
     }
   ]
 }
@@ -48,7 +63,7 @@ Respons `200`:
 
 ## 2. GET /api/umkm/:slug
 
-Detail satu UMKM.
+Detail satu UMKM. Bentuk objek sama dengan item pada daftar.
 
 Respons `200`: `{ "data": { ...satu objek UMKM... } }`
 
@@ -62,7 +77,7 @@ Respons `404`:
 
 Halaman Daftar UMKM membutuhkan endpoint ini **hanya jika** target submit
 diputuskan memakai backend. Jika memakai Google Form, endpoint ini dihapus
-dari kontrak.
+dari kontrak. Desain halaman form belum ada, jadi daftar field masih usulan.
 
 Request: `multipart/form-data`
 
@@ -70,11 +85,12 @@ Request: `multipart/form-data`
 |---|---|---|---|
 | `name` | string | ya | nama usaha, maks 100 karakter |
 | `owner` | string | ya | nama pemilik |
-| `category` | string | ya | salah satu dari daftar kategori |
-| `dusun` | string | ya | alamat/dusun |
+| `address` | string | ya | alamat/dusun |
 | `whatsapp` | string | ya | angka saja, diawali `62` |
 | `description` | string | ya | maks 500 karakter |
-| `photo` | file | tidak | jpg/png/webp, maks 5 MB |
+| `priceMin` | integer | tidak | harga mulai |
+| `openingHours` | string | tidak | jam buka |
+| `photos` | file[] | tidak | maks 5 file, jpg/png/webp, masing-masing maks 5 MB |
 | `consent` | boolean | ya | pemilik setuju datanya dipublikasikan |
 
 Respons `201`:
@@ -94,7 +110,7 @@ Respons `422` (validasi):
   "message": "Data tidak valid",
   "errors": {
     "whatsapp": ["Nomor WhatsApp harus diawali 62"],
-    "photo": ["Ukuran foto maksimal 5 MB"]
+    "photos": ["Maksimal 5 foto"]
   }
 }
 ```
@@ -140,24 +156,34 @@ Respons `200`:
 | `id` | integer | ya | identitas internal, tidak dipakai di URL |
 | `slug` | string | ya | unik, huruf kecil, tanda hubung (`kopi-sabah-balau`). Dibuat backend dari `name` |
 | `name` | string | ya | maks 100 karakter |
-| `category` | string | ya | usulan: `Kuliner`, `Jasa`, `Kerajinan`, `Pertanian`, `Lainnya` |
-| `owner` | string | ya | nama pemilik |
-| `dusun` | string | ya | alamat singkat/dusun |
+| `owner` | string | ya | nama pemilik/pengelola |
+| `ownerSince` | integer \| null | tidak | tahun mulai usaha, untuk teks "Sejak 2012" |
+| `address` | string | ya | alamat lengkap yang ditampilkan |
+| `mapsUrl` | string \| null | tidak | link Google Maps. `null` = alamat tidak bisa diklik |
 | `whatsapp` | string | ya | angka saja, diawali `62`, tanpa `+`, spasi, atau tanda hubung |
-| `imageUrl` | string \| null | tidak | URL absolut foto. `null` jika tidak ada foto |
+| `priceMin` | integer \| null | tidak | harga mulai, dipakai di kartu dan detail |
+| `openingHours` | string \| null | tidak | contoh: `Setiap hari, 08.00–22.00 WIB` |
 | `description` | string | ya | maks 500 karakter |
+| `images` | string[] | tidak | 0–5 URL absolut. Item pertama = foto utama kartu |
+| `products` | object[] | tidak | 0–3 produk unggulan: `{ name, description, price }` |
 
-Catatan frontend: `whatsapp` dipakai untuk membuat link
-`https://wa.me/<nomor>`. Kartu UMKM harus tetap rapi saat `imageUrl` null.
+Catatan frontend:
+
+- `whatsapp` dipakai untuk membuat link `https://wa.me/<nomor>`.
+- Kartu menampilkan `images[0]`; jika `images` kosong, tampilkan placeholder.
+- Detail menampilkan galeri `images`, daftar `products`, `address` yang bisa
+  diklik ke `mapsUrl`, dan `priceMin` sebagai "Harga Mulai".
+- Harga diformat `Intl.NumberFormat('id-ID')` → `Rp 15.000`.
+- Tombol "Bagikan" memakai Web Share API; tidak perlu field baru.
 
 ## 6. Gambar
 
-- Respons API sebaiknya mengembalikan **URL absolut** (lengkap dengan domain),
-  supaya frontend tidak perlu menebak alamat file.
+- Respons API mengembalikan **URL absolut** (lengkap dengan domain).
 - Jika backend mengembalikan path relatif (`/uploads/...`), tulis di kontrak
-  dan frontend akan menambahkan `VITE_API_URL` di satu tempat.
+  dan frontend menambahkan `VITE_API_URL` di satu tempat.
 - Placeholder data di `src/data/umkm.js` memakai path lokal
-  (`/images/kopi-sabah-balau.jpg`); ini hanya untuk development.
+  (`/images/...`); ini hanya untuk development.
+- Jika `images` kosong, UI wajib punya fallback (bukan ikon gambar rusak).
 
 ## 7. Status & error
 
@@ -175,11 +201,15 @@ Catatan frontend: `whatsapp` dipakai untuk membuat link
 - [ ] Base URL API saat production (subdomain? domain yang sama?)
 - [ ] Pemilik & jadwal backend
 - [ ] Siapa yang menyetujui pendaftaran UMKM (`pending` → tampil)
-- [ ] Daftar kategori final
 - [ ] Batas ukuran & format foto
+- [ ] Desain halaman Daftar UMKM dan layout mobile (belum ada)
+- [ ] Apakah `products` diisi pemilik lewat form atau dilengkapi admin
 
 ## 9. Changelog
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
 | 0 | 2026-11-03 | Draft awal dari kebutuhan frontend |
+| 1 | 2026-11-04 | Tambah harga, perilaku kartu/pencarian/pagination |
+| 2 | 2026-11-05 | Hapus kategori total; tambah field detail: `images`, `products`, `priceMin`/`priceMax`, `saleType`, `ownerSince`, `address`, `mapsUrl`, `openingHours` |
+| 3 | 2026-11-05 | Hapus `priceMax` dan `saleType` dari desain |
