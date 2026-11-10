@@ -60,16 +60,23 @@ frontend/
 
 ```json
 {
-  "id": 1,
-  "slug": "kopi-sabah-balau",
-  "name": "Kopi Sabah Balau",
-  "category": "Kuliner",
-  "owner": "Ibu Sari",
-  "dusun": "Dusun 1",
-  "whatsapp": "62812xxxxxxx",
-  "imageUrl": "/images/kopi-sabah-balau.jpg",
-  "description": "Kopi robusta hasil kebun warga."
-}
+    id: 2,
+    slug: "umkm-2",
+    name: "UMKM 2",
+    owner: "Owner 2",
+    ownerSince: 2021,
+    address: "Sabah Balau",
+    mapsUrl: "https://www.google.com/maps/place/Sabah+Balau/@-1.234567,103.456789,15z",
+    whatsapp: "628123456789",
+    priceMin: 15000,
+    openingHours: "Senin–Sabtu, 09.00–18.00 WIB",
+    description: "Contoh UMKM 2, ini deskripsi dari UMKM 2.",
+    images: [],
+    products: [
+      { name: "Produk 1", description: "Deskripsi produk 4", price: 15000 },
+      { name: "Produk 2", description: "Deskripsi produk 5", price: 25000 },
+    ],
+  }
 ```
 
 - `slug` unik, huruf kecil, pakai tanda hubung. Contoh: `kopi-sabah-balau`.

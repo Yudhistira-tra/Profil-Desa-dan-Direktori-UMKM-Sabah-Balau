@@ -1,8 +1,5 @@
 # Kontrak API — Profil Desa & Direktori UMKM
 
-Versi 3, 5 November 2026. Pemilik dokumen: FE B.
-Status: **belum dikonfirmasi backend.** Setelah backend setuju (atau minta
-revisi), perbarui file ini dan catat di bagian Changelog.
 
 Dokumen ini menjelaskan bentuk data yang dibutuhkan frontend. Backend bebas
 menentukan cara menyimpan, selama bentuk respons sesuai kesepakatan di sini.
