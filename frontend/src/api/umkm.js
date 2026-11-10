@@ -9,5 +9,6 @@ export async function getUmkmList() {
 
 export async function getUmkmBySlug(slug) {
     await delay(300);
-    return umkmData.find((umkm) => umkm.slug === slug);
+    return umkmData.find((umkm) => umkm.slug === slug) ?? null;
 }
+

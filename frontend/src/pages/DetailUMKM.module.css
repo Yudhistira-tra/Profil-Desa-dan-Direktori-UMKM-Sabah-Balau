@@ -1,0 +1,270 @@
+.page {
+  min-height: 100svh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  background: #fafbff;
+  text-align: left;
+}
+
+.status,
+.empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: #6b6f8a;
+}
+
+.backLink {
+  color: #5b3df5;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  font-size: 14px;
+  color: #6b6f8a;
+}
+
+.breadcrumb a {
+  color: #5b3df5;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 40px;
+  align-items: start;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mainImage {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #e8eaf9;
+}
+
+.mainImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mainImage span {
+  color: #8b90ad;
+  font-size: 14px;
+}
+
+.thumbs {
+  display: flex;
+  gap: 12px;
+}
+
+.thumbs img {
+  width: 96px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.name {
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: #0e0b2b;
+}
+
+.description {
+  margin: 0 0 24px;
+  color: #4b4f6b;
+}
+
+.priceRange {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+}
+
+.priceLabel {
+  font-size: 13px;
+  color: #464556;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.price {
+  font-size: 25px;
+  font-weight: 700;
+  color: #5b3df5;
+}
+
+.profileData {   
+ margin-bottom: 24px;
+ background-color: #EFF4FF;
+ padding: 15px;
+ border-radius: 12px;
+}
+
+.profileTop {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 20px;
+}
+
+.namaPemilik {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #16123f;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b6f8a;
+}
+
+.profileBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+}
+
+a.alamat {
+  color: #5b3df5;
+  text-decoration: none;
+}
+
+a.alamat:hover {
+  text-decoration: underline;
+}
+
+span.alamat {
+  color: #16123f;
+}
+
+.jamBuka {
+  color: #4b4f6b;
+}
+
+.produkTitle {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: #0e0b2b;
+}
+
+.produkList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.produkItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+}
+
+.productName {
+  margin: 0 0 4px;
+  font-weight: 600;
+  color: #16123f;
+}
+
+.productDesc {
+  margin: 0;
+  font-size: 14px;
+  color: #6b6f8a;
+}
+
+.productPrice {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #5b3df5;
+}
+
+.waCta {
+  display: block;
+  padding: 14px;
+  border-radius: 8px;
+  background: #0b5c1e;
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.waCta:hover {
+  background: #0a4d19;
+}
+
+.banner {
+  padding: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #DDE9FF, #ffffff);
+  margin-top: 120px;
+}
+
+.bannerTitle {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #0D1C2F;
+  font-weight: bold;
+}
+
+.bannerLink {
+  padding: 15px 12px;
+  border-radius: 12px;
+  background: #3321E4;
+  color: #fff;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.bannerLink:hover {
+  background: #DDE9FF;
+  color: #3321E4;
+  transition: ease-in-out 0.2s;
+}
