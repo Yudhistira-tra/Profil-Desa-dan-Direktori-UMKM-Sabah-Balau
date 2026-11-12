@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Ilustrasi peta wilayah Desa Sabah Balau">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e7efff" />
+      <stop offset="0.55" stop-color="#d9e6ff" />
+      <stop offset="1" stop-color="#cddffc" />
+    </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="1" stop-color="#b9cdec" stop-opacity="0.55" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#base)" />
+
+  <!-- Blok lahan -->
+  <g fill="#c3d8f7" opacity="0.55">
+    <path d="M60 120h180l30 90-40 110-190 20-30-120z" />
+    <path d="M330 70h200l40 80-30 130-220-10-30-110z" />
+    <path d="M660 90h210l20 120-70 80-200-20 10-110z" />
+    <path d="M940 60h200l20 140-90 80-160-40z" />
+    <path d="M70 470h210l20 130-60 120-190-20z" />
+    <path d="M360 520h230l20 140-80 90-190-30z" />
+    <path d="M700 470h190l30 110-50 130-200-10z" />
+    <path d="M960 500h190l10 160-90 60-140-60z" />
+  </g>
+
+  <!-- Area hijau -->
+  <g fill="#c8ebda" opacity="0.9">
+    <path d="M120 150c70-30 150-20 170 40s-30 110-100 110-140-40-130-90 30-45 60-60z" />
+    <path d="M880 420c60-40 140-20 150 40s-40 110-110 100-120-60-100-100 30-25 60-40z" />
+    <path d="M420 600c50-40 140-30 150 30s-40 100-110 90-100-50-80-80 20-25 40-40z" />
+  </g>
+
+  <!-- Kontur halus -->
+  <g fill="none" stroke="#b7cff2" stroke-width="2" opacity="0.55">
+    <path d="M-40 690c180-70 300-40 430 10s310 60 460-10 260-40 380 20" />
+    <path d="M-40 730c180-70 300-40 430 10s310 60 460-10 260-40 380 20" />
+    <path d="M-40 770c180-70 300-40 430 10s310 60 460-10 260-40 380 20" />
+  </g>
+
+  <!-- Sungai -->
+  <path
+    d="M-20 330c140-30 210 30 320 20s160-80 270-70 180 90 300 90 190-50 340-20"
+    fill="none"
+    stroke="#b7d4fb"
+    stroke-width="34"
+    stroke-linecap="round"
+  />
+  <path
+    d="M-20 330c140-30 210 30 320 20s160-80 270-70 180 90 300 90 190-50 340-20"
+    fill="none"
+    stroke="#d6e8ff"
+    stroke-width="10"
+    stroke-linecap="round"
+    opacity="0.8"
+  />
+
+  <!-- Jalan utama -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-30 250c170 40 320-20 480 10s280 90 440 60 220-70 340-40" stroke="#ffffff" stroke-width="26" />
+    <path d="M240 -30c40 140-10 240 20 370s110 240 90 490" stroke="#ffffff" stroke-width="24" />
+    <path d="M820 -30c-30 150 40 230 20 380s-90 220-60 470" stroke="#ffffff" stroke-width="22" />
+    <path d="M-30 560c190-50 360 10 540-20s330-80 520-40 180-10 200-10" stroke="#ffffff" stroke-width="20" />
+  </g>
+
+  <!-- Jalan kecil -->
+  <g fill="none" stroke="#f8fbff" stroke-width="9" stroke-linecap="round">
+    <path d="M60 100h300v120H60z" />
+    <path d="M700 120h250v140H700z" />
+    <path d="M420 420h260v160H420z" />
+    <path d="M180 440h160v130H180z" />
+    <path d="M720 600h220v120H720z" />
+    <path d="M330 300h170v80H330z" />
+    <path d="M560 80h90v110h-90z" />
+  </g>
+
+  <rect width="1200" height="800" fill="url(#shade)" />
+</svg>

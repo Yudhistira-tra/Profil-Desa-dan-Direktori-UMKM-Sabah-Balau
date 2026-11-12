@@ -1,0 +1,119 @@
+.skipLink {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--primary-strong);
+  border-radius: 8px;
+  transform: translateY(-200%);
+  transition: transform 0.18s ease;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  min-height: 55vh;
+  padding: 64px 24px;
+  color: var(--body);
+  font-size: 14px;
+}
+
+.placeholder {
+  padding: 88px 24px;
+  background: var(--bg);
+}
+
+.placeholderCard {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 44px;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.placeholderBadge {
+  display: inline-flex;
+  padding: 5px 12px;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--primary-50);
+  border-radius: 999px;
+}
+
+.placeholderCard h1 {
+  margin-top: 16px;
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: -0.02em;
+}
+
+.placeholderCard p {
+  margin-top: 12px;
+  color: var(--body);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.placeholderActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+.placeholderPrimary,
+.placeholderSecondary {
+  display: inline-flex;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: background-color 0.18s ease;
+}
+
+.placeholderPrimary {
+  color: #ffffff;
+  background: var(--primary);
+}
+
+.placeholderPrimary:hover {
+  background: var(--primary-strong);
+}
+
+.placeholderSecondary {
+  color: var(--primary-strong);
+  background: var(--primary-50);
+}
+
+.placeholderSecondary:hover {
+  background: #e1e6ff;
+}
+
+@media (max-width: 520px) {
+  .placeholder {
+    padding: 56px 20px;
+  }
+
+  .placeholderCard {
+    padding: 30px 22px;
+  }
+
+  .placeholderPrimary,
+  .placeholderSecondary {
+    width: 100%;
+    justify-content: center;
+  }
+}

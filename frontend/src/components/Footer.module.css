@@ -1,0 +1,131 @@
+.footer {
+  color: #ffffff;
+  background:
+    radial-gradient(120% 120% at 15% 0%, rgba(111, 251, 190, 0.12), transparent 55%),
+    var(--primary);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr 1.2fr;
+  gap: 48px;
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 64px var(--gutter) 72px;
+}
+
+.brandName {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brandMeta {
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+
+.address {
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-style: normal;
+  line-height: 1.9;
+  opacity: 0.9;
+}
+
+.heading {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.menuLink {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+  border-radius: 4px;
+  transition: opacity 0.18s ease;
+}
+
+.menuLink:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  opacity: 0.92;
+}
+
+.contact li > svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.contactLink {
+  border-radius: 4px;
+  word-break: break-word;
+  transition: opacity 0.18s ease;
+}
+
+.contactLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hours {
+  display: flex;
+}
+
+.hoursLabel {
+  display: block;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 52px var(--gutter) 56px;
+  }
+
+  .brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 44px var(--gutter) 48px;
+  }
+
+  .brand {
+    grid-column: auto;
+  }
+}
