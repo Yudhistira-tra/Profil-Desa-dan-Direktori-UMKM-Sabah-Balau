@@ -1,0 +1,163 @@
+.page {
+  min-height: 100svh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  background: #fafbff;
+  text-align: left;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 32px;
+  font-size: 14px;
+  color: #4b4f6b;
+}
+
+.breadcrumb a {
+  color: #4b4f6b;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: #0e0b2b;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 40px;
+  line-height: 1.1;
+  color: #0e0b2b;
+}
+
+.subtitle {
+  margin: 0 0 32px;
+  color: #4b4f6b;
+}
+
+.form {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0e0b2b;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 1px solid #c9cbe0;
+  border-radius: 8px;
+  background: #ffffff;
+  font: inherit;
+  color: #0e0b2b;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: 2px solid #4f46e5;
+  outline-offset: 1px;
+  border-color: #4f46e5;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: #c0392b;
+}
+
+.consentLabel {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14px;
+  color: #4b4f6b;
+}
+
+.checkbox {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: #4f46e5;
+}
+
+.submit {
+  align-self: flex-start;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  background: #4f46e5;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit:hover {
+  background: #4338ca;
+}
+
+.submit:disabled {
+  background: #9ca0c3;
+  cursor: not-allowed;
+}
+
+.successBox {
+  max-width: 720px;
+  padding: 40px 32px;
+  border: 1px solid #c9cbe0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.successTitle {
+  margin: 0 0 12px;
+  font-size: 28px;
+  color: #0e0b2b;
+}
+
+.successText {
+  margin: 0 0 24px;
+  color: #4b4f6b;
+}
+
+.successLink {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 10px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}
