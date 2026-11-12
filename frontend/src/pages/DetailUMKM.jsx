@@ -133,14 +133,34 @@ function DetailUMKM() {
                 </div>
             </div>
 
-            <section className={styles.banner}>
-                <h2 className={styles.bannerTitle}>
-                    Punya usaha di Sabah Balau dan ingin terdaftar di direktori resmi?
-                </h2>
-                <Link to="/daftar-umkm" className={styles.bannerLink}>
-                    Daftarkan usahamu sekarang
-                </Link>
-            </section>
+            <section className={styles.ctaSection}>
+                    <div className={styles.container}>
+                      <div className={styles.ctaCard}>
+                        <div className={styles.ctaCopy}>
+                          <span className={styles.ctaBadge}>
+                            Bantuan &amp; Pendaftaran UMKM
+                          </span>
+                          <h2>
+                            Pelaku Usaha di Sabah Balau
+                            <br />
+                            Belum Terdaftar?
+                          </h2>
+                        </div>
+                        <div className={styles.ctaActions}>
+                          <Link className={styles.ctaPrimary} to="/daftar-umkm">
+                            Daftarkan UMKM
+                            <br />
+                            Sekarang
+                          </Link>
+                          <Link className={styles.ctaSecondary} to="/daftar-umkm#persyaratan">
+                            Panduan
+                            <br />
+                            Persyaratan
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
         </div>
     );
 }

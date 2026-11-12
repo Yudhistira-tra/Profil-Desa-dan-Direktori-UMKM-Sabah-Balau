@@ -233,38 +233,96 @@ span.alamat {
   background: #0a4d19;
 }
 
-.banner {
-  padding: 32px;
+.ctaSection {
+  padding: 72px 0 92px;
+  background: #ffffff;
+}
+
+.ctaCard {
+  position: relative;
   display: flex;
+  gap: 40px;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #DDE9FF, #ffffff);
-  margin-top: 120px;
+  overflow: hidden;
+  padding: 44px 48px;
+  color: #ffffff;
+  background:
+    radial-gradient(80% 160% at 92% -20%, rgba(111, 251, 190, 0.28), transparent 55%),
+    linear-gradient(115deg, #4e46fb 0%, #554cfb 55%, #6f5cff 100%);
+  border-radius: 24px;
 }
 
-.bannerTitle {
-  margin: 0 0 8px;
-  font-size: 32px;
-  color: #0D1C2F;
-  font-weight: bold;
+.ctaCard::after {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  content: '';
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  right: -80px;
+  bottom: -140px;
 }
 
-.bannerLink {
-  padding: 15px 12px;
-  border-radius: 12px;
-  background: #3321E4;
-  color: #fff;
-  font-weight: 600;
-  font-size: 17px;
-  text-decoration: none;
-  justify-content: center;
-  align-items: center;
-  
+.ctaCopy {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
 }
 
-.bannerLink:hover {
-  background: #DDE9FF;
-  color: #3321E4;
-  transition: ease-in-out 0.2s;
+.ctaBadge {
+  display: inline-flex;
+  padding: 6px 14px;
+  margin-bottom: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.ctaCard h2 {
+  color: #ffffff;
+  font-size: clamp(24px, 2.8vw, 33px);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+
+.ctaActions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  padding: 16px 24px;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  border-radius: 14px;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.ctaPrimary {
+  color: var(--primary-strong);
+  text-align: left;
+  background: #ffffff;
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-2px);
+}
+
+.ctaSecondary {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
