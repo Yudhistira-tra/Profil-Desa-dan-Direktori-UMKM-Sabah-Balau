@@ -103,22 +103,24 @@ function DetailUMKM() {
                         </div>
                     </div>
 
-                    <div className={styles.produkUnggulan}>
-                        <h2 className={styles.produkTitle}>Produk Unggulan</h2>
-                        <ul className={styles.produkList}>
-                            {umkm.products.map((product) => (
-                                <li key={product.name} className={styles.produkItem}>
-                                    <div>
-                                        <p className={styles.productName}>{product.name}</p>
-                                        <p className={styles.productDesc}>{product.description}</p>
-                                    </div>
-                                    <span className={styles.productPrice}>
-                                        {rupiah.format(product.price)}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {umkm.products.length > 0 && (
+                        <div className={styles.produkUnggulan}>
+                            <h2 className={styles.produkTitle}>Produk Unggulan</h2>
+                            <ul className={styles.produkList}>
+                                {umkm.products.map((product) => (
+                                    <li key={product.name} className={styles.produkItem}>
+                                        <div>
+                                            <p className={styles.productName}>{product.name}</p>
+                                            <p className={styles.productDesc}>{product.description}</p>
+                                        </div>
+                                        <span className={styles.productPrice}>
+                                            {rupiah.format(product.price)}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <a
                         className={styles.waCta}
