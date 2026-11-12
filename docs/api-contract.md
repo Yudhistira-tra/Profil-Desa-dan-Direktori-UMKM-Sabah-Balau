@@ -82,6 +82,7 @@ Request: `multipart/form-data`
 |---|---|---|---|
 | `name` | string | ya | nama usaha, maks 100 karakter |
 | `owner` | string | ya | nama pemilik |
+| `ownerSince` | integer | tidak | tahun mulai usaha |
 | `address` | string | ya | alamat/dusun |
 | `whatsapp` | string | ya | angka saja, diawali `62` |
 | `description` | string | ya | maks 500 karakter |
@@ -90,6 +91,9 @@ Request: `multipart/form-data`
 | `photos` | file[] | tidak | maks 5 file, jpg/png/webp, masing-masing maks 5 MB |
 | `consent` | boolean | ya | pemilik setuju datanya dipublikasikan |
 
+`mapsUrl`, `products`, dan persetujuan akhir dilengkapi/diisi **admin desa**
+lewat halaman admin, bukan oleh pemilik lewat form.
+
 Respons `201`:
 
 ```json
@@ -97,8 +101,8 @@ Respons `201`:
 ```
 
 Pendaftaran **tidak langsung tampil** di direktori. Backend menyimpan dengan
-status `pending` dan admin desa menyetujui secara manual (belum ada UI admin
-di versi ini).
+status `pending` dan admin desa menyetujui secara manual lewat halaman
+admin (lihat bagian 5–7 di bawah).
 
 Respons `422` (validasi):
 
@@ -112,7 +116,52 @@ Respons `422` (validasi):
 }
 ```
 
-## 4. GET /api/profil
+## 4. POST /api/login — **(USULAN, menunggu keputusan backend)**
+
+Login untuk sekdes/staff desa. Publik tidak butuh akun apa pun; hanya halaman
+`/admin` yang terkunci. Password disimpan **hashed** di database, bukan teks
+biasa; sesi memakai cookie `HttpOnly`.
+
+Request:
+
+```json
+{ "username": "sekdes", "password": "..." }
+```
+
+Respons `200`:
+
+```json
+{ "data": { "name": "Nama Sekdes", "role": "admin" } }
+```
+
+Respons `401`: `{ "message": "Login gagal" }`
+
+Semua endpoint di bagian 5–7 ditolak (`401`) tanpa sesi login yang valid.
+
+## 5. GET /api/admin/pendaftaran — **(USULAN)**
+
+Daftar pendaftaran berstatus `pending`, urut terbaru dulu, untuk ditinjau
+admin.
+
+Respons `200`: `{ "data": [ ...objek UMKM + status... ] }`
+
+## 6. PATCH /api/umkm/:slug — **(USULAN)**
+
+Admin menyetujui, menolak, atau memperbaiki data satu UMKM. Request berisi
+satu atau beberapa field yang diubah:
+
+| Field | Catatan |
+|---|---|
+| `status` | `pending` → `aktif` (tampil) atau `ditolak` |
+| `mapsUrl` | diisi admin (pemilik tidak mengisi lewat form) |
+| `products` | dilengkapi admin |
+| `images` | URL hasil upload foto (lihat bagian 9) |
+| field UMKM lain | koreksi data |
+
+Respons `200`: `{ "data": { ...objek UMKM terbaru... } }`
+Respons `404`: `{ "message": "UMKM tidak ditemukan" }`
+
+## 7. GET /api/profil
 
 Isi halaman Profil Desa. Struktur di bawah adalah usulan; sesuaikan dengan
 konten yang akhirnya dikumpulkan. Bagian yang belum ada boleh `null`.
@@ -146,7 +195,7 @@ Respons `200`:
 }
 ```
 
-## 5. Definisi field UMKM
+## 8. Definisi field UMKM
 
 | Field | Tipe | Wajib | Catatan |
 |---|---|---|---|
@@ -173,7 +222,7 @@ Catatan frontend:
 - Harga diformat `Intl.NumberFormat('id-ID')` → `Rp 15.000`.
 - Tombol "Bagikan" memakai Web Share API; tidak perlu field baru.
 
-## 6. Gambar
+## 9. Gambar
 
 - Respons API mengembalikan **URL absolut** (lengkap dengan domain).
 - Jika backend mengembalikan path relatif (`/uploads/...`), tulis di kontrak
@@ -182,7 +231,7 @@ Catatan frontend:
   (`/images/...`); ini hanya untuk development.
 - Jika `images` kosong, UI wajib punya fallback (bukan ikon gambar rusak).
 
-## 7. Status & error
+## 10. Status & error
 
 | Kode | Arti |
 |---|---|
@@ -192,7 +241,7 @@ Catatan frontend:
 | 422 | Validasi gagal (isinya `errors`) |
 | 500 | Error server, pesan umum |
 
-## 8. Keputusan terbuka
+## 11. Keputusan terbuka
 
 - [ ] Target submit Daftar UMKM: POST API / Google Form / WhatsApp
 - [ ] Base URL API saat production (subdomain? domain yang sama?)
@@ -200,9 +249,12 @@ Catatan frontend:
 - [ ] Siapa yang menyetujui pendaftaran UMKM (`pending` → tampil)
 - [ ] Batas ukuran & format foto
 - [ ] Desain halaman Daftar UMKM dan layout mobile (belum ada)
-- [ ] Apakah `products` diisi pemilik lewat form atau dilengkapi admin
+- [x] Apakah `products` diisi pemilik lewat form atau dilengkapi admin →
+      **dilengkapi admin** (13 November 2026); `mapsUrl` juga diisi admin
+- [ ] Endpoint admin (bagian 4–6): framework backend, siapa mengerjakan,
+      dan desain halaman `/admin` (belum ada)
 
-## 9. Changelog
+## 12. Changelog
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
@@ -210,3 +262,4 @@ Catatan frontend:
 | 1 | 2026-11-04 | Tambah harga, perilaku kartu/pencarian/pagination |
 | 2 | 2026-11-05 | Hapus kategori total; tambah field detail: `images`, `products`, `priceMin`/`priceMax`, `saleType`, `ownerSince`, `address`, `mapsUrl`, `openingHours` |
 | 3 | 2026-11-05 | Hapus `priceMax` dan `saleType` dari desain |
+| 4 | 2026-11-13 | POST pendaftaran tambah `ownerSince`; `mapsUrl`/`products` diputuskan diisi admin; tambah usulan endpoint admin: login, daftar pending, approve/edit (bagian 4–6, menunggu keputusan backend) |
