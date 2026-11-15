@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getPendaftaran, setStatusPendaftaran } from "../api/admin.js";
 import { getUmkmList } from "../api/umkm.js";
+import AdminNavbar from "../components/AdminNavbar";
 import Icon from "../components/Icon.jsx";
 import styles from "./AdminDashboard.module.css";
 
@@ -14,7 +15,6 @@ const formatTanggal = new Intl.DateTimeFormat("id-ID", {
 });
 
 function AdminDashboard() {
-  const navigate = useNavigate();
   const [adminName] = useState(() => sessionStorage.getItem("adminName"));
   const [pendaftaran, setPendaftaran] = useState([]);
   const [totalAktif, setTotalAktif] = useState(0);
@@ -52,28 +52,9 @@ function AdminDashboard() {
     setProcessingId(null);
   }
 
-  function handleLogout() {
-    sessionStorage.removeItem("adminName");
-    navigate("/admin");
-  }
-
   return (
     <div className={styles.page}>
-      <header className={styles.navbar}>
-        <div className={styles.navInner}>
-          <Link to="/admin/dashboard" className={styles.brand}>Desa Sabah Balau</Link>
-          <nav className={styles.navLinks}>
-            <Link to="/admin/dashboard" className={styles.navActive}>Dashboard</Link>
-            <Link to="/umkm" className={styles.navLink}>Direktori UMKM</Link>
-          </nav>
-          <div className={styles.navRight}>
-            <span className={styles.adminName}>{adminName}</span>
-            <button type="button" className={styles.logout} onClick={handleLogout}>
-              Keluar
-            </button>
-          </div>
-        </div>
-      </header>
+      <AdminNavbar adminName={adminName} />
 
       <main className={styles.main}>
         <div className={styles.head}>
@@ -152,6 +133,12 @@ function AdminDashboard() {
                         <td className={styles.dateCell}>{formatTanggal.format(new Date(item.date))}</td>
                         <td>
                           <div className={styles.actions}>
+                            <Link
+                              to={`/admin/umkm/${item.id}`}
+                              className={styles.view}
+                            >
+                              Lihat
+                            </Link>
                             <button
                               type="button"
                               className={styles.approve}

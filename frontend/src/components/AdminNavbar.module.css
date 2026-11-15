@@ -1,0 +1,84 @@
+.navbar {
+  border-bottom: 1px solid #eceef7;
+  background: #ffffff;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 20px 48px;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0e0b2b;
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.active,
+.link {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.active {
+  background: #eef0fd;
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.link {
+  color: #4b4f6b;
+}
+
+.link:hover {
+  color: #0e0b2b;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.adminName {
+  font-size: 14px;
+  color: #4b4f6b;
+}
+
+.logout {
+  padding: 8px 16px;
+  border: 1px solid #d7d9e8;
+  border-radius: 8px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  color: #4b4f6b;
+  cursor: pointer;
+}
+
+.logout:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+}
