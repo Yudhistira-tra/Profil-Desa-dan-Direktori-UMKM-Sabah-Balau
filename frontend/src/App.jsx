@@ -51,6 +51,7 @@ const DetailUmkm = halamanFeB(() => import('./pages/DetailUMKM.jsx'))
 const DaftarUmkm = halamanFeB(() => import('./pages/Daftar.jsx'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin.jsx'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
+const AdminUmkmEdit = lazy(() => import('./pages/AdminUmkmEdit.jsx'))
 
 function HalamanMemuat() {
   return (
@@ -104,6 +105,7 @@ export default function App() {
         <Routes>
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/umkm/:id" element={<AdminUmkmEdit />} />
           <Route element={<LayoutPublik />}>
             <Route path="/" element={<Beranda />} />
             <Route path="/profil" element={<ProfilDesa />} />
