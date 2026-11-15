@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Link, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import Beranda from './pages/Beranda'
@@ -49,6 +49,8 @@ const halamanFeB = (muat) =>
 const Direktori = halamanFeB(() => import('./pages/Direktori.jsx'))
 const DetailUmkm = halamanFeB(() => import('./pages/DetailUMKM.jsx'))
 const DaftarUmkm = halamanFeB(() => import('./pages/Daftar.jsx'))
+const AdminLogin = lazy(() => import('./pages/AdminLogin.jsx'))
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
 
 function HalamanMemuat() {
   return (
@@ -77,27 +79,41 @@ function ScrollToTop() {
   return null
 }
 
-export default function App() {
+function LayoutPublik() {
   return (
-    <BrowserRouter>
+    <>
       <a className={styles.skipLink} href="#konten">
         Langsung ke konten
       </a>
-      <ScrollToTop />
       <Navbar />
       <main id="konten" tabIndex={-1}>
         <Suspense fallback={<HalamanMemuat />}>
-          <Routes>
+          <Outlet />
+        </Suspense>
+      </main>
+      <Footer />
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <Suspense fallback={<HalamanMemuat />}>
+        <Routes>
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route element={<LayoutPublik />}>
             <Route path="/" element={<Beranda />} />
             <Route path="/profil" element={<ProfilDesa />} />
             <Route path="/umkm" element={<Direktori />} />
             <Route path="/umkm/:slug" element={<DetailUmkm />} />
             <Route path="/daftar-umkm" element={<DaftarUmkm />} />
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </main>
-      <Footer />
+          </Route>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }
