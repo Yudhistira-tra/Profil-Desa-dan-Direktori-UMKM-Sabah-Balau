@@ -50,7 +50,10 @@ function DetailUMKM() {
                         {cover ? (
                             <img src={cover} alt={umkm.name} />
                         ) : (
-                            <span>Belum ada foto</span>
+                            <img
+                                src="/images/placeholder-umkm.svg"
+                                alt={`Belum ada foto ${umkm.name}`}
+                            />
                         )}
                     </div>
 
@@ -133,12 +136,12 @@ function DetailUMKM() {
                 </div>
             </div>
 
-            <section className={styles.ctaSection}>
+             <section className={styles.ctaSection}>
                     <div className={styles.container}>
                       <div className={styles.ctaCard}>
                         <div className={styles.ctaCopy}>
                           <span className={styles.ctaBadge}>
-                            Bantuan &amp; Pendaftaran UMKM
+                            Pendaftaran UMKM
                           </span>
                           <h2>
                             Pelaku Usaha di Sabah Balau
@@ -152,15 +155,11 @@ function DetailUMKM() {
                             <br />
                             Sekarang
                           </Link>
-                          <Link className={styles.ctaSecondary} to="/daftar-umkm#persyaratan">
-                            Panduan
-                            <br />
-                            Persyaratan
-                          </Link>
                         </div>
                       </div>
                     </div>
                   </section>
+                  
         </div>
     );
 }

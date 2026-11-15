@@ -13,11 +13,11 @@ function UMKMCard({ umkm }) {
   return (
     <article className={styles.card}>
       <div className={styles.cover}>
-        {cover ? (
-          <img src={cover} alt={umkm.name} className={styles.image} />
-        ) : (
-          <span className={styles.coverEmpty}>Belum ada foto</span>
-        )}
+        <img
+          src={cover ?? '/images/placeholder-umkm.svg'}
+          alt={cover ? umkm.name : `Belum ada foto ${umkm.name}`}
+          className={styles.image}
+        />
       </div>
 
       <div className={styles.body}>

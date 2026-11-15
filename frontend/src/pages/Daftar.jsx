@@ -15,6 +15,10 @@ const initialForm = {
   consent: false,
 };
 
+const MAX_PHOTOS = 5;
+const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
 function validate(form) {
   const errors = {};
 
@@ -37,6 +41,8 @@ function validate(form) {
 
 function Daftar() {
   const [form, setForm] = useState(initialForm);
+  const [photos, setPhotos] = useState([]);
+  const [photoError, setPhotoError] = useState("");
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
 
@@ -44,6 +50,36 @@ function Daftar() {
     const { name, value, type, checked } = event.target;
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
+  function handlePhotoChange(event) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+
+    const problems = [];
+    const accepted = [];
+    files.forEach((file) => {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        problems.push(`${file.name}: format harus JPG, PNG, atau WebP.`);
+      } else if (file.size > MAX_PHOTO_SIZE) {
+        problems.push(`${file.name}: ukuran maksimal 5 MB.`);
+      } else {
+        accepted.push({ file, preview: URL.createObjectURL(file) });
+      }
+    });
+
+    const room = MAX_PHOTOS - photos.length;
+    if (accepted.length > room) {
+      problems.push(`Maksimal ${MAX_PHOTOS} foto.`);
+    }
+    setPhotos([...photos, ...accepted.slice(0, room)]);
+    setPhotoError(problems[0] ?? "");
+  }
+
+  function removePhoto(index) {
+    URL.revokeObjectURL(photos[index].preview);
+    setPhotos(photos.filter((_, photoIndex) => photoIndex !== index));
+    setPhotoError("");
   }
 
   async function handleSubmit(event) {
@@ -59,7 +95,9 @@ function Daftar() {
         whatsapp: form.whatsapp.replace(/\D/g, ""),
         ownerSince: form.ownerSince === "" ? null : Number(form.ownerSince),
         priceMin: form.priceMin === "" ? null : Number(form.priceMin),
+        photos: photos.map((photo) => photo.file),
       });
+      photos.forEach((photo) => URL.revokeObjectURL(photo.preview));
       setStatus("success");
     } catch {
       setStatus("error");
@@ -182,6 +220,46 @@ function Daftar() {
             onChange={handleChange}
           />
           {errors.description && <p className={styles.error}>{errors.description}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>
+            Foto Usaha <span className={styles.optional}>(opsional, maks 5)</span>
+          </span>
+          <p className={styles.photoHint}>JPG, PNG, atau WebP — maksimal 5 MB per foto.</p>
+          <div className={styles.photoGrid}>
+            {photos.map((photo, index) => (
+              <div key={photo.preview} className={styles.photoItem}>
+                <img
+                  src={photo.preview}
+                  alt={`Foto ${index + 1}`}
+                  className={styles.photoThumb}
+                />
+                <button
+                  type="button"
+                  className={styles.photoRemove}
+                  onClick={() => removePhoto(index)}
+                  aria-label={`Hapus foto ${index + 1}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS && (
+              <label className={styles.photoAdd}>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className={styles.photoInput}
+                  onChange={handlePhotoChange}
+                />
+                <span aria-hidden="true">+</span>
+                Tambah Foto
+              </label>
+            )}
+          </div>
+          {photoError && <p className={styles.error}>{photoError}</p>}
         </div>
 
         <div className={styles.fieldRow}>
