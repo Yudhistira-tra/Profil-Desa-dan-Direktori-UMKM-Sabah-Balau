@@ -376,7 +376,7 @@ export default function Beranda() {
           <div className={styles.ctaCard}>
             <div className={styles.ctaCopy}>
               <span className={styles.ctaBadge}>
-                Bantuan &amp; Pendaftaran UMKM
+                Pendaftaran UMKM
               </span>
               <h2>
                 Pelaku Usaha di Sabah Balau
@@ -389,11 +389,6 @@ export default function Beranda() {
                 Daftarkan UMKM
                 <br />
                 Sekarang
-              </Link>
-              <Link className={styles.ctaSecondary} to="/daftar-umkm#persyaratan">
-                Panduan
-                <br />
-                Persyaratan
               </Link>
             </div>
           </div>

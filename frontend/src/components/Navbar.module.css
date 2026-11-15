@@ -13,10 +13,10 @@
   justify-content: space-between;
   gap: 24px;
   width: 100%;
-  max-width: var(--container);
+  max-width: none;
   height: var(--nav-height);
   margin: 0 auto;
-  padding: 0 var(--gutter);
+  padding: 0 clamp(20px, 4vw, 72px);
 }
 
 .brand {
