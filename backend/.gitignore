@@ -1,0 +1,6 @@
+node_modules/
+.env
+data/*.db
+data/*.db-*
+storage/umkm/*
+!storage/umkm/.gitkeep

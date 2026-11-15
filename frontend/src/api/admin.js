@@ -1,6 +1,8 @@
+import { request, BOLEH_TIRUAN } from "./http.js";
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Data tiruan. Nanti diganti fetch ke endpoint admin yang disepakati.
+// Data tiruan. Hanya dipakai saat development bila backend tidak aktif (lihat http.js).
 let pendaftaran = [
   {
     id: 1,
@@ -140,45 +142,136 @@ let pendaftaran = [
   },
 ];
 
-// Sementara menerima kredensial apa pun yang terisi. Nanti diganti
-// fetch ke POST /api/login sesuai kontrak.
+// ---------------------------------------------------------------------------
+// Sesi admin. Token dari POST /api/login disimpan di sessionStorage (hilang saat
+// tab ditutup) dan dikirim di header Authorization pada setiap permintaan admin.
+// ---------------------------------------------------------------------------
+const KUNCI_TOKEN = "adminToken";
+const KUNCI_TIRUAN = "adminTiruan";
+
+const modeTiruan = () => sessionStorage.getItem(KUNCI_TIRUAN) === "1";
+
+// Token ditolak backend (kedaluwarsa atau belum login): kembali ke halaman login.
+function sesiHabis() {
+  sessionStorage.removeItem(KUNCI_TOKEN);
+  sessionStorage.removeItem("adminName");
+  window.location.assign("/admin");
+}
+
+async function panggil(path, opsi = {}) {
+  try {
+    return await request(path, { ...opsi, token: sessionStorage.getItem(KUNCI_TOKEN) });
+  } catch (error) {
+    if (error.status === 401) sesiHabis();
+    throw error;
+  }
+}
+
+// POST /api/login. Pesan error dari backend ("Username atau password salah")
+// ditampilkan apa adanya oleh halaman login.
 export async function loginAdmin({ username, password }) {
-  await delay(500);
   if (!username.trim() || !password.trim()) {
     throw new Error("Username dan password wajib diisi.");
   }
-  return { data: { name: "Administrator" } };
-}
-
-export async function getPendaftaran() {
-  await delay(400);
-  return pendaftaran;
-}
-
-export async function getUmkmAdmin(id) {
-  await delay(300);
-  return pendaftaran.find((item) => item.id === id) ?? null;
-}
-
-// Sementara mengubah data di memori. Di backend nanti ini
-// PATCH /api/umkm/:slug.
-export async function updateUmkmAdmin(id, changes) {
-  await delay(400);
-  pendaftaran = pendaftaran.map((item) =>
-    item.id === id ? { ...item, ...changes } : item,
-  );
-  const updated = pendaftaran.find((item) => item.id === id);
-
-  if (updated && updated.status !== "pending") {
-    pendaftaran = pendaftaran.filter((item) => item.id !== id);
+  try {
+    const data = await request("/login", {
+      method: "POST",
+      json: { username: username.trim(), password },
+    });
+    sessionStorage.setItem(KUNCI_TOKEN, data.token);
+    sessionStorage.removeItem(KUNCI_TIRUAN);
+    return { data: { name: data.name } };
+  } catch (error) {
+    if (error.luring && BOLEH_TIRUAN) {
+      // Backend tidak aktif (development): masuk dengan data tiruan, seperti sebelumnya.
+      console.warn("[API] Backend tidak aktif, halaman admin memakai data contoh.");
+      await delay(500);
+      sessionStorage.setItem(KUNCI_TIRUAN, "1");
+      sessionStorage.removeItem(KUNCI_TOKEN);
+      return { data: { name: "Administrator (data contoh)" } };
+    }
+    throw error;
   }
+}
+
+// GET /api/admin/pendaftaran — pendaftaran berstatus pending, terbaru dulu.
+export async function getPendaftaran() {
+  if (modeTiruan()) {
+    await delay(400);
+    return pendaftaran;
+  }
+  return panggil("/admin/pendaftaran");
+}
+
+// GET /api/admin/umkm/:id — null bila tidak ditemukan.
+export async function getUmkmAdmin(id) {
+  if (modeTiruan()) {
+    await delay(300);
+    return pendaftaran.find((item) => item.id === id) ?? null;
+  }
+  try {
+    return await panggil(`/admin/umkm/${id}`);
+  } catch (error) {
+    if (error.status === 404) return null;
+    throw error;
+  }
+}
+
+// PATCH /api/admin/umkm/:id (sama dengan PATCH /api/umkm/:slug di kontrak).
+// Dikirim sebagai multipart: field "data" berisi JSON, field "photos" berisi foto baru.
+export async function updateUmkmAdmin(id, changes) {
+  if (modeTiruan()) {
+    await delay(400);
+    pendaftaran = pendaftaran.map((item) =>
+      item.id === id ? { ...item, ...changes } : item,
+    );
+    const updated = pendaftaran.find((item) => item.id === id);
+
+    if (updated && updated.status !== "pending") {
+      pendaftaran = pendaftaran.filter((item) => item.id !== id);
+    }
+    return { data: updated };
+  }
+
+  const images = changes.images ?? [];
+  // Foto yang baru dipilih di halaman edit masih berupa URL sementara "blob:".
+  const fotoBaru = images.filter((url) => url.startsWith("blob:"));
+
+  const body = new FormData();
+  body.append(
+    "data",
+    JSON.stringify({
+      name: changes.name,
+      owner: changes.owner,
+      ownerSince: changes.ownerSince ?? null,
+      address: changes.address,
+      mapsUrl: changes.mapsUrl || null,
+      whatsapp: changes.whatsapp,
+      description: changes.description,
+      priceMin: changes.priceMin ?? null,
+      openingHours: changes.openingHours || null,
+      status: changes.status,
+      products: changes.products ?? [],
+      // Foto lama yang dipertahankan; yang tidak tercantum dihapus backend.
+      images: images.filter((url) => !url.startsWith("blob:")),
+    }),
+  );
+  for (const url of fotoBaru) {
+    const blob = await fetch(url).then((res) => res.blob());
+    body.append("photos", blob, "foto");
+  }
+
+  const updated = await panggil(`/admin/umkm/${id}`, { method: "PATCH", body, timeoutMs: 60000 });
   return { data: updated };
 }
 
-// Sementara langsung menghapus dari daftar pending. Di backend nanti
-// ini PATCH /api/umkm/:slug dengan field status.
+// PATCH status saja: "aktif" (tampil di direktori) atau "ditolak".
 export async function setStatusPendaftaran(id, status) {
-  await delay(300);
-  pendaftaran = pendaftaran.filter((item) => item.id !== id);
-  return { data: { id, status } };
+  if (modeTiruan()) {
+    await delay(300);
+    pendaftaran = pendaftaran.filter((item) => item.id !== id);
+    return { data: { id, status } };
+  }
+  const updated = await panggil(`/admin/umkm/${id}`, { method: "PATCH", json: { status } });
+  return { data: { id, status: updated.status } };
 }

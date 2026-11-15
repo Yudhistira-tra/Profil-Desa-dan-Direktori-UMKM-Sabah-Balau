@@ -1,0 +1,32 @@
+# Uji API langsung dari VS Code.
+# Pasang ekstensi "REST Client", jalankan backend (npm run dev), lalu klik "Send Request"
+# yang muncul di atas tiap permintaan.
+
+@api = http://localhost:8000/api
+
+### Daftar UMKM yang sudah disetujui
+GET {{api}}/umkm
+
+### Detail satu UMKM
+GET {{api}}/umkm/umkm-1
+
+### Profil desa (struktur perangkat desa)
+GET {{api}}/profil
+
+### Login admin (ganti password sesuai ADMIN_PASSWORD di .env)
+# @name login
+POST {{api}}/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "ISI-PASSWORD-ADMIN" }
+
+### Antrean pendaftaran (pending) — jalankan "Login admin" dulu
+GET {{api}}/admin/pendaftaran
+Authorization: Bearer {{login.response.body.data.token}}
+
+### Setujui pendaftaran (ganti angka 12 dengan id dari antrean)
+PATCH {{api}}/admin/umkm/12
+Authorization: Bearer {{login.response.body.data.token}}
+Content-Type: application/json
+
+{ "status": "aktif" }

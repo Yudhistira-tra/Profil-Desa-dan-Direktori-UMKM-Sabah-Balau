@@ -34,19 +34,21 @@ export const profilDesa = {
     'Memperkuat pembangunan infrastruktur dasar serta kualitas sumber daya manusia dan lingkungan hidup.',
   ],
 
+  // Sumber: papan Struktur Kepemerintahan Desa Sabah Balau di kantor desa (difoto 15 November 2026).
+  // Foto perangkat belum dipakai: menunggu izin dari pihak desa.
   struktur: {
     pimpinan: {
-      nama: 'Nama Kepala Desa',
+      nama: 'Pujianto, S.E.',
       jabatan: 'Kepala Desa',
       unit: 'Pimpinan Desa',
       deskripsi:
         'Memimpin penyelenggaraan pemerintahan, pembangunan, dan pemberdayaan masyarakat Desa Sabah Balau.',
-      email: 'kepaladesa@sabahbalau.desa.id',
+      email: null,
       photoUrl: null,
     },
     perangkat: [
       {
-        nama: 'Nama Sekretaris Desa',
+        nama: 'Erpandi, S.Ag.',
         jabatan: 'Sekretaris Desa',
         unit: 'Sekretariat',
         deskripsi:
@@ -54,43 +56,107 @@ export const profilDesa = {
         photoUrl: null,
       },
       {
-        nama: 'Nama Kaur Keuangan',
-        jabatan: 'Kepala Urusan Keuangan',
-        unit: 'Keuangan',
+        nama: 'Yunita Nurul Septiana',
+        jabatan: 'Kaur Umum',
+        unit: 'Sekretariat',
+        deskripsi:
+          'Mengelola surat-menyurat, arsip, inventaris, dan administrasi umum desa.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Muhamad Jamal Aripin',
+        jabatan: 'Kaur Perencanaan',
+        unit: 'Sekretariat',
+        deskripsi:
+          'Menyusun rencana kerja dan anggaran desa serta evaluasi program.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Ois Widyawati',
+        jabatan: 'Kaur Keuangan',
+        unit: 'Sekretariat',
         deskripsi:
           'Menatausahakan anggaran, laporan keuangan, dan pertanggungjawaban APBDes.',
         photoUrl: null,
       },
       {
-        nama: 'Nama Kasi Pemerintahan',
-        jabatan: 'Kasi Pemerintahan',
-        unit: 'Pemerintahan',
+        nama: 'Heriansyah, A.Md.',
+        jabatan: 'Kasi Kepemerintahan',
+        unit: 'Pelaksana Teknis',
         deskripsi:
           'Membina administrasi kewilayahan, ketenteraman, dan ketertiban masyarakat.',
         photoUrl: null,
       },
       {
-        nama: 'Nama Kasi Kesejahteraan',
-        jabatan: 'Kasi Kesejahteraan',
-        unit: 'Kesejahteraan',
+        nama: 'Agus Setiawan',
+        jabatan: 'Kasi Kesra',
+        unit: 'Pelaksana Teknis',
         deskripsi:
-          'Menangani program sosial, kesehatan, pendidikan, dan pemberdayaan warga.',
+          'Menangani pembangunan, pemberdayaan, dan program kesejahteraan warga.',
         photoUrl: null,
       },
       {
-        nama: 'Nama Kasi Pelayanan',
+        nama: 'Putri Endriana',
         jabatan: 'Kasi Pelayanan',
-        unit: 'Pelayanan',
+        unit: 'Pelaksana Teknis',
         deskripsi:
-          'Memberikan layanan surat-menyurat serta pendampingan administrasi warga.',
+          'Memberikan layanan administrasi dan pendampingan kepada warga.',
         photoUrl: null,
       },
       {
-        nama: 'Nama Kepala Dusun I',
-        jabatan: 'Kepala Dusun I',
+        nama: 'Bambang Priyanto',
+        jabatan: 'Kepala Dusun 1A',
         unit: 'Kewilayahan',
         deskripsi:
-          'Menjadi penghubung antara pemerintah desa dan warga di wilayah dusun.',
+          'Penghubung pemerintah desa dengan warga Dusun 1A.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Sunardi',
+        jabatan: 'Kepala Dusun 1B',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 1B.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Hanapi Maolanasyah',
+        jabatan: 'Kepala Dusun 1C',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 1C.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Febri Yusanto',
+        jabatan: 'Kepala Dusun 2A',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 2A.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Basuki Santoso',
+        jabatan: 'Kepala Dusun 2B',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 2B.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Supandi',
+        jabatan: 'Kepala Dusun 3A',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 3A.',
+        photoUrl: null,
+      },
+      {
+        nama: 'Anton Andriansyah',
+        jabatan: 'Kepala Dusun 3B',
+        unit: 'Kewilayahan',
+        deskripsi:
+          'Penghubung pemerintah desa dengan warga Dusun 3B.',
         photoUrl: null,
       },
     ],
