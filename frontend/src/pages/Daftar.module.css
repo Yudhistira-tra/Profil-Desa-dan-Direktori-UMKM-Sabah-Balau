@@ -91,6 +91,93 @@
   color: #c0392b;
 }
 
+.optional {
+  font-weight: 400;
+  color: #7c7f99;
+}
+
+.photoHint {
+  margin: 0;
+  font-size: 13px;
+  color: #7c7f99;
+}
+
+.photoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.photoItem {
+  position: relative;
+  width: 110px;
+  height: 82px;
+  border: 1px solid #c9cbe0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.photoThumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(14, 11, 43, 0.72);
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.photoAdd {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 110px;
+  height: 82px;
+  border: 1.5px dashed #b9bcd6;
+  border-radius: 10px;
+  color: #4b4f6b;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.photoAdd span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.photoAdd:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.photoInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
 .consentLabel {
   display: flex;
   gap: 12px;
