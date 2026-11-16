@@ -1,0 +1,101 @@
+{
+  "_petunjuk": "Isi bagian yang sudah ada datanya. Biarkan null bila belum ada. Perubahan langsung terbaca tanpa restart server. Kunci yang diawali _ diabaikan.",
+  "sejarah": null,
+  "visi": null,
+  "misi": [],
+  "struktur": [
+    {
+      "name": "Pujianto, S.E.",
+      "position": "Kepala Desa",
+      "photoUrl": null
+    },
+    {
+      "name": "Erpandi, S.Ag.",
+      "position": "Sekretaris Desa",
+      "photoUrl": null
+    },
+    {
+      "name": "Yunita Nurul Septiana",
+      "position": "Kaur Umum",
+      "photoUrl": null
+    },
+    {
+      "name": "Muhamad Jamal Aripin",
+      "position": "Kaur Perencanaan",
+      "photoUrl": null
+    },
+    {
+      "name": "Ois Widyawati",
+      "position": "Kaur Keuangan",
+      "photoUrl": null
+    },
+    {
+      "name": "Heriansyah, A.Md.",
+      "position": "Kasi Kepemerintahan",
+      "photoUrl": null
+    },
+    {
+      "name": "Agus Setiawan",
+      "position": "Kasi Kesra",
+      "photoUrl": null
+    },
+    {
+      "name": "Putri Endriana",
+      "position": "Kasi Pelayanan",
+      "photoUrl": null
+    },
+    {
+      "name": "Bambang Priyanto",
+      "position": "Kepala Dusun 1A",
+      "photoUrl": null
+    },
+    {
+      "name": "Sunardi",
+      "position": "Kepala Dusun 1B",
+      "photoUrl": null
+    },
+    {
+      "name": "Hanapi Maolanasyah",
+      "position": "Kepala Dusun 1C",
+      "photoUrl": null
+    },
+    {
+      "name": "Febri Yusanto",
+      "position": "Kepala Dusun 2A",
+      "photoUrl": null
+    },
+    {
+      "name": "Basuki Santoso",
+      "position": "Kepala Dusun 2B",
+      "photoUrl": null
+    },
+    {
+      "name": "Supandi",
+      "position": "Kepala Dusun 3A",
+      "photoUrl": null
+    },
+    {
+      "name": "Anton Andriansyah",
+      "position": "Kepala Dusun 3B",
+      "photoUrl": null
+    }
+  ],
+  "geografis": {
+    "luas": null,
+    "batasUtara": null,
+    "batasSelatan": null,
+    "batasTimur": null,
+    "batasBarat": null
+  },
+  "demografi": {
+    "jumlahPenduduk": null,
+    "jumlahKK": null
+  },
+  "kontak": {
+    "alamat": null,
+    "telepon": null,
+    "email": null,
+    "jamLayanan": null
+  },
+  "_sumber_struktur": "Papan Struktur Kepemerintahan Desa Sabah Balau di kantor desa, difoto 15 November 2026. Foto perangkat belum dipakai (menunggu izin)."
+}

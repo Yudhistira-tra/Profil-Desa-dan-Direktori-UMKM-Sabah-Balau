@@ -1,11 +1,10 @@
+import { request, denganCadangan } from "./http.js";
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Sementara hanya simulasi. Request sudah disusun sebagai FormData
-// (multipart) sesuai kontrak POST /api/umkm, jadi tinggal diganti fetch
-// ke endpoint backend yang disepakati.
+// POST /api/umkm (multipart/form-data) sesuai kontrak. Pendaftaran disimpan
+// berstatus "pending" dan baru tampil di direktori setelah disetujui admin.
 export async function submitPendaftaran(data) {
-  await delay(800);
-
   const body = new FormData();
   Object.entries(data).forEach(([key, value]) => {
     if (key === "photos" || value === null || value === undefined) return;
@@ -13,6 +12,13 @@ export async function submitPendaftaran(data) {
   });
   (data.photos ?? []).forEach((file) => body.append("photos", file));
 
-  console.log("Data pendaftaran:", [...body.entries()]);
-  return { data: { message: "Pendaftaran diterima." } };
+  return denganCadangan(
+    async () => ({ data: await request("/umkm", { method: "POST", body, timeoutMs: 60000 }) }),
+    // Backend tidak aktif (development): hanya simulasi, data TIDAK tersimpan.
+    async () => {
+      await delay(800);
+      console.log("Data pendaftaran (simulasi, tidak tersimpan):", [...body.entries()]);
+      return { data: { message: "Pendaftaran diterima." } };
+    },
+  );
 }
