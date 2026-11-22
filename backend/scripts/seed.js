@@ -8,7 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 const { db } = require('../src/db');
+const os = require('os');
 const { createUmkm } = require('../src/umkm');
+const berita = require('../src/berita');
 
 const reset = process.argv.includes('--reset');
 
@@ -38,7 +40,40 @@ const menunggu = [
   { name: 'Contoh Pendaftaran Kedua', owner: 'Owner Kedua', ownerSince: null, address: 'Dusun 2B, Sabah Balau', whatsapp: '628128888888', priceMin: null, openingHours: null, description: 'Contoh pendaftaran tanpa harga dan jam buka, untuk dilengkapi admin.' },
 ];
 
+// Berita contoh dari frontend/src/data/berita.js. File itu meng-import gambar (khusus Vite),
+// jadi baris import gambar diganti null sebelum dibaca: berita contoh tampil tanpa foto utama.
+async function beritaDariFrontend() {
+  const file = path.join(__dirname, '..', '..', 'frontend', 'src', 'data', 'berita.js');
+  if (!fs.existsSync(file)) return [];
+  const sumber = fs.readFileSync(file, 'utf8').replace(/^import\s+(\w+)\s+from\s+['"][^'"]+\.(jpe?g|png|webp|svg)['"];?\s*$/gim, 'const $1 = null;');
+  const tmp = path.join(os.tmpdir(), `berita-contoh-${process.pid}.mjs`);
+  try {
+    fs.writeFileSync(tmp, sumber);
+    const modul = await import(pathToFileURL(tmp).href);
+    return Array.isArray(modul.beritaData) ? modul.beritaData : [];
+  } catch (e) {
+    console.log(`Berita contoh frontend tidak bisa dibaca (${e.message}); berita dilewati.`);
+    return [];
+  } finally {
+    fs.rmSync(tmp, { force: true });
+  }
+}
+
+async function seedBerita() {
+  if (reset) db.exec('DELETE FROM berita');
+  else if (db.prepare('SELECT COUNT(*) AS n FROM berita').get().n > 0) return console.log('Tabel berita sudah berisi data, seed berita dilewati.');
+  let n = 0;
+  for (const b of await beritaDariFrontend()) {
+    const v = berita.validasi(b, false);
+    if (v.errors) { console.log(`Berita "${b.title}" dilewati: ${JSON.stringify(v.errors)}`); continue; }
+    berita.create(v.nilai, typeof b.cover === 'string' && b.cover ? { file: b.cover } : null, b.slug);
+    n++;
+  }
+  console.log(`${n} berita contoh ditambahkan.`);
+}
+
 async function main() {
+  await seedBerita();
   if (reset) {
     db.exec('DELETE FROM umkm');
     console.log('Semua data UMKM dihapus.');

@@ -1,18 +1,18 @@
 # Backend — Profil Desa & Direktori UMKM Sabah Balau
 
-API untuk frontend di `frontend/`, mengikuti `docs/api-contract.md` (v4).
+API untuk frontend di `frontend/`, mengikuti `docs/api-contract.md` (v5).
 
 - **Tanpa paket tambahan.** Hanya memakai fitur bawaan Node.js (server HTTP dan SQLite bawaan),
   jadi **tidak perlu `npm install`**.
 - Butuh **Node.js 22.13 atau lebih baru** (cek dengan `node -v`).
-- Database: SQLite di `data/umkm.db` (dibuat otomatis). Foto: `storage/umkm/`.
+- Database: SQLite di `data/umkm.db` (dibuat otomatis). Foto UMKM dan foto berita: `storage/umkm/`.
 
 ## Menjalankan
 
 ```bash
 cd backend
 copy .env.example .env      # sekali saja; lalu isi ADMIN_PASSWORD (minimal 8 karakter)
-npm run seed:reset          # isi data contoh (sama dengan data contoh frontend) + 2 pendaftaran pending
+npm run seed:reset          # isi data contoh UMKM + berita (sama dengan data contoh frontend) + 2 pendaftaran pending
 npm run dev                 # http://localhost:8000/api
 ```
 
@@ -30,7 +30,9 @@ Bila backend tidak dijalankan saat development, frontend otomatis memakai data c
 | GET | `/api/umkm` | Daftar UMKM berstatus **aktif**, urut nama A–Z |
 | GET | `/api/umkm/:slug` | Detail satu UMKM; `404 { "message": "UMKM tidak ditemukan" }` |
 | POST | `/api/umkm` | Pendaftaran (`multipart/form-data`), disimpan berstatus `pending` |
-| GET | `/api/profil` | Isi Profil Desa (dari `content/profil.json`) |
+| GET | `/api/profil` | Isi Profil Desa (bawaan `content/profil.json` + perubahan admin) |
+| GET | `/api/berita` | Berita berstatus **terbit**, urut tanggal terbaru (tanpa `content`) |
+| GET | `/api/berita/:slug` | Detail berita + `content` (daftar paragraf); `404` bila tidak ada atau masih draf |
 | POST | `/api/login` | Login admin `{ username, password }` → `{ data: { name, token } }` + cookie HttpOnly |
 | POST | `/api/logout` | Menghapus cookie sesi |
 | GET | `/api/admin/pendaftaran` | **Admin**: antrean pendaftaran `pending`, terbaru dulu |
@@ -38,7 +40,13 @@ Bila backend tidak dijalankan saat development, frontend otomatis memakai data c
 | GET | `/api/admin/umkm/:id` | **Admin**: satu UMKM untuk halaman edit |
 | PATCH | `/api/admin/umkm/:id` atau `/api/umkm/:slug` | **Admin**: setujui/tolak/lengkapi data |
 | DELETE | `/api/admin/umkm/:id` | **Admin**: hapus UMKM beserta fotonya |
-| GET | `/storage/umkm/<file>` | Foto UMKM |
+| GET | `/api/admin/berita` | **Admin**: semua berita (draf + terbit) |
+| GET | `/api/admin/berita/:id` | **Admin**: satu berita untuk form edit |
+| POST | `/api/admin/berita` | **Admin**: buat berita (`201`) |
+| PATCH | `/api/admin/berita/:id` | **Admin**: ubah berita (slug tetap) |
+| DELETE | `/api/admin/berita/:id` | **Admin**: hapus berita beserta foto utamanya |
+| PATCH | `/api/admin/profil` | **Admin**: ganti bagian profil yang dikirim |
+| GET | `/storage/umkm/<file>` | Foto UMKM dan foto utama berita |
 
 Format: sukses `{ "data": ... }`, error `{ "message": "..." }`, validasi `422` dengan `errors`.
 Status lain: `401` belum login, `413` data terlalu besar, `415` format kiriman salah, `429` terlalu banyak permintaan.
@@ -60,6 +68,28 @@ Body JSON berisi field yang diubah saja, misalnya `{ "status": "aktif" }`. Untuk
 
 Slug tidak berubah walau nama diedit, supaya tautan lama tetap berlaku.
 
+### Berita (admin)
+
+POST/PATCH memakai JSON, atau `multipart/form-data` berisi field `data` (JSON) + field `cover` (1 file
+jpg/png/webp, maks 5 MB). `"cover": null` menghapus foto utama; tanpa field `cover` foto tidak berubah.
+
+| Field | Catatan |
+|---|---|
+| `title` | wajib, maks 150 karakter; slug dibuat otomatis dan tidak berubah saat diedit |
+| `date` | wajib, `YYYY-MM-DD` |
+| `excerpt` | wajib, maks 220 karakter |
+| `content` | wajib, daftar paragraf (minimal 1) |
+| `sourceUrl` | opsional, link `http(s)://` |
+| `status` | `draf` (bawaan) atau `terbit` |
+
+### Profil (admin)
+
+`PATCH /api/admin/profil` dengan body JSON berbentuk sama seperti GET. Bagian yang dikirim
+(`periode`, `ringkasan`, `jargon`, `sejarah`, `visi`, `misi`, `struktur`, `geografis`, `demografi`, `kontak`)
+diganti utuh; bagian lain tetap. Ditolak `422` bila email salah, angka negatif, atau total persen mata
+pencaharian lebih dari 100. Perubahan disimpan di `data/profil-admin.json` (hapus file itu untuk
+kembali ke isi bawaan `content/profil.json`).
+
 ## Admin lewat terminal (cadangan)
 
 ```bash
@@ -71,14 +101,15 @@ npm run admin -- hapus <slug>
 
 ## Mengisi Profil Desa
 
-Edit `content/profil.json`. Bagian yang belum ada datanya biarkan `null`. Perubahan langsung terbaca.
+Lewat halaman `/admin/profil`, atau edit `content/profil.json` (isi bawaan). Bagian yang belum ada
+datanya biarkan `null`. Perubahan langsung terbaca. Perubahan dari halaman admin menimpa isi bawaan per bagian.
 
 ## Uji otomatis
 
 ```bash
 npm run seed:reset
 npm start                   # terminal 1
-npm test                    # terminal 2 — 35 uji kontrak & keamanan
+npm test                    # terminal 2 — 46 uji kontrak & keamanan
 ```
 
 `ADMIN_PASSWORD` di `.env` harus terisi agar uji admin berjalan. Data uji dihapus otomatis.
