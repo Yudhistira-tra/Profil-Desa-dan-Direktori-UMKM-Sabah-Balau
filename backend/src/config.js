@@ -19,6 +19,8 @@ module.exports = {
   DB_PATH: path.resolve(ROOT, process.env.DB_PATH || 'data/umkm.db'),
   STORAGE_DIR: path.resolve(ROOT, process.env.STORAGE_DIR || 'storage/umkm'),
   PROFIL_PATH: path.join(ROOT, 'content', 'profil.json'),
+  // Perubahan profil dari halaman admin disimpan terpisah, di atas isi bawaan content/profil.json.
+  PROFIL_ADMIN_PATH: path.resolve(ROOT, process.env.PROFIL_ADMIN_PATH || 'data/profil-admin.json'),
   // Akun admin untuk halaman /admin di frontend (POST /api/login).
   ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'admin',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '', // minimal 8 karakter; kosong = login admin nonaktif

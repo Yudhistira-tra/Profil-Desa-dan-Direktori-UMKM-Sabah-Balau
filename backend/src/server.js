@@ -8,6 +8,7 @@ const umkm = require('./routes/umkm');
 const profil = require('./routes/profil');
 const admin = require('./routes/admin');
 const auth = require('./routes/auth');
+const berita = require('./routes/berita');
 
 // Daftar route: [method, pola URL, handler]. Bagian dalam kurung pada pola dikirim ke handler.
 const routes = [
@@ -16,6 +17,8 @@ const routes = [
   ['POST', /^\/api\/umkm$/, umkm.create],
   ['GET', /^\/api\/umkm\/([^/]{1,200})$/, umkm.detail],
   ['GET', /^\/api\/profil$/, profil.get],
+  ['GET', /^\/api\/berita$/, berita.list],
+  ['GET', /^\/api\/berita\/([^/]{1,200})$/, berita.detail],
   ['PATCH', /^\/api\/umkm\/([^/]{1,200})$/, admin.updateBySlug],
   ['POST', /^\/api\/login$/, auth.login],
   ['POST', /^\/api\/logout$/, auth.logout],
@@ -24,6 +27,12 @@ const routes = [
   ['GET', /^\/api\/admin\/umkm\/(\d{1,10})$/, admin.detail],
   ['PATCH', /^\/api\/admin\/umkm\/(\d{1,10})$/, admin.update],
   ['DELETE', /^\/api\/admin\/umkm\/(\d{1,10})$/, admin.remove],
+  ['GET', /^\/api\/admin\/berita$/, berita.adminList],
+  ['POST', /^\/api\/admin\/berita$/, berita.create],
+  ['GET', /^\/api\/admin\/berita\/(\d{1,10})$/, berita.adminDetail],
+  ['PATCH', /^\/api\/admin\/berita\/(\d{1,10})$/, berita.update],
+  ['DELETE', /^\/api\/admin\/berita\/(\d{1,10})$/, berita.remove],
+  ['PATCH', /^\/api\/admin\/profil$/, profil.update],
 ];
 
 // Batas umum per IP agar server tidak dibanjiri permintaan.

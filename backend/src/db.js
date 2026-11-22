@@ -56,6 +56,22 @@ CREATE TABLE IF NOT EXISTS umkm_products (
   position    INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_products_umkm ON umkm_products (umkm_id, position);
+
+-- Berita desa (kontrak bagian 8–10). content = JSON array paragraf.
+CREATE TABLE IF NOT EXISTS berita (
+  id         INTEGER PRIMARY KEY,
+  slug       TEXT NOT NULL UNIQUE,
+  title      TEXT NOT NULL,
+  excerpt    TEXT NOT NULL,
+  content    TEXT NOT NULL,
+  cover      TEXT,              -- nama file di storage/umkm, path lokal, atau URL absolut
+  date       TEXT NOT NULL,     -- YYYY-MM-DD
+  source_url TEXT,
+  status     TEXT NOT NULL DEFAULT 'draf' CHECK (status IN ('draf', 'terbit')),
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_berita_status_date ON berita (status, date DESC);
 `);
 
 // Migrasi ringan untuk database lama: tambah kolom bila belum ada (aman dijalankan berulang).

@@ -149,7 +149,8 @@ let pendaftaran = [
 const KUNCI_TOKEN = "adminToken";
 const KUNCI_TIRUAN = "adminTiruan";
 
-const modeTiruan = () => sessionStorage.getItem(KUNCI_TIRUAN) === "1";
+// Diekspor juga untuk api/berita.js dan api/profil.js (endpoint admin berita & profil).
+export const modeTiruan = () => sessionStorage.getItem(KUNCI_TIRUAN) === "1";
 
 // Token ditolak backend (kedaluwarsa atau belum login): kembali ke halaman login.
 function sesiHabis() {
@@ -158,7 +159,7 @@ function sesiHabis() {
   window.location.assign("/admin");
 }
 
-async function panggil(path, opsi = {}) {
+export async function panggil(path, opsi = {}) {
   try {
     return await request(path, { ...opsi, token: sessionStorage.getItem(KUNCI_TOKEN) });
   } catch (error) {

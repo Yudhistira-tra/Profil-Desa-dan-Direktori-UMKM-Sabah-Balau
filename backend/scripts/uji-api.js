@@ -106,9 +106,34 @@ async function main() {
     const r = await api('/api/profil');
     assert.equal(r.status, 200);
     const d = r.body.data;
-    for (const k of ['sejarah', 'visi', 'misi', 'struktur', 'geografis', 'demografi', 'kontak']) assert.ok(k in d, `bagian ${k} tidak ada`);
-    assert.ok(Array.isArray(d.misi) && Array.isArray(d.struktur));
+    for (const k of ['periode', 'ringkasan', 'jargon', 'sejarah', 'visi', 'misi', 'struktur', 'geografis', 'demografi', 'kontak']) assert.ok(k in d, `bagian ${k} tidak ada`);
+    assert.ok(Array.isArray(d.misi) && Array.isArray(d.struktur.perangkat) && d.struktur.pimpinan);
+    assert.ok(Array.isArray(d.demografi.sebaranDusun) && Array.isArray(d.demografi.mataPencaharian));
     assert.ok(!Object.keys(d).some((k) => k.startsWith('_')), 'kunci petunjuk ikut terkirim');
+  });
+
+  console.log('\n[Kontrak 8-9] Berita publik');
+  await uji('GET /api/berita -> hanya terbit, urut tanggal terbaru, tanpa content', async () => {
+    const r = await api('/api/berita');
+    assert.equal(r.status, 200);
+    const d = r.body.data;
+    assert.ok(Array.isArray(d));
+    for (let i = 1; i < d.length; i++) assert.ok(d[i - 1].date >= d[i].date, 'urutan tanggal salah');
+    for (const b of d) {
+      assert.deepEqual(Object.keys(b).sort(), ['cover', 'date', 'excerpt', 'id', 'slug', 'sourceUrl', 'title']);
+      assert.match(b.date, /^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+  await uji('GET /api/berita/:slug -> content berupa daftar paragraf; slug asing -> 404', async () => {
+    const daftar = (await api('/api/berita')).body.data;
+    if (!daftar.length) return 'lewat';
+    const r = await api('/api/berita/' + daftar[0].slug);
+    assert.equal(r.status, 200);
+    assert.ok(Array.isArray(r.body.data.content) && r.body.data.content.length > 0);
+    assert.ok(!('status' in r.body.data));
+    const x = await api('/api/berita/tidak-ada-berita-ini');
+    assert.equal(x.status, 404);
+    assert.deepEqual(x.body, { message: 'Berita tidak ditemukan' });
   });
 
   console.log('\n[Aturan umum] CORS & format error');
@@ -336,6 +361,101 @@ async function main() {
     dibuat.splice(dibuat.indexOf(baru.id), 1);
     if (gambar) assert.equal((await fetch(BASE + new URL(gambar).pathname)).status, 404);
   });
+
+  console.log('\n[Kontrak 10] Admin berita');
+  let beritaUji = null;
+  await uji('Admin berita tanpa login -> 401', async () => {
+    assert.equal((await api('/api/admin/berita')).status, 401);
+    assert.equal((await api('/api/admin/berita', json('POST', { title: 'x' }))).status, 401);
+    assert.equal((await api('/api/admin/profil', json('PATCH', { visi: 'x' }))).status, 401);
+  });
+  await uji('POST berita tidak lengkap -> 422 per field', async () => {
+    if (!siap()) return 'lewat';
+    const r = await api('/api/admin/berita', json('POST', { title: '', date: '2026-02-30', content: [], sourceUrl: 'javascript:alert(1)', status: 'tayang' }, admin));
+    assert.equal(r.status, 422);
+    for (const k of ['title', 'date', 'excerpt', 'content', 'sourceUrl', 'status']) assert.ok(r.body.errors[k], `errors.${k} tidak ada`);
+  });
+  await uji('POST berita draf + cover (multipart) -> 201, tidak tampil di publik', async () => {
+    if (!siap()) return 'lewat';
+    const fd = new FormData();
+    fd.append('data', JSON.stringify({ title: 'Berita Uji Otomatis', date: '2026-11-01', excerpt: 'Ringkasan uji.', content: ['Paragraf satu.', 'Paragraf dua.'], sourceUrl: null }));
+    fd.append('cover', new Blob([PNG], { type: 'image/png' }), 'cover.png');
+    const r = await api('/api/admin/berita', { method: 'POST', headers: admin, body: fd });
+    assert.equal(r.status, 201);
+    beritaUji = r.body.data;
+    assert.equal(beritaUji.status, 'draf');
+    assert.equal(beritaUji.slug, 'berita-uji-otomatis');
+    assert.match(beritaUji.cover, /^https?:\/\/.+\/storage\/umkm\/[a-f0-9]{24}\.png$/);
+    assert.equal((await api('/api/berita/' + beritaUji.slug)).status, 404);
+    assert.ok((await api('/api/admin/berita', { headers: admin })).body.data.some((b) => b.id === beritaUji.id));
+  });
+  await uji('Cover palsu (bukan gambar) -> 422', async () => {
+    if (!siap() || !beritaUji) return 'lewat';
+    const fd = new FormData();
+    fd.append('data', '{}');
+    fd.append('cover', new Blob(['<?php system($_GET[1]); ?>'], { type: 'image/png' }), 'shell.php.png');
+    const r = await api(`/api/admin/berita/${beritaUji.id}`, { method: 'PATCH', headers: admin, body: fd });
+    assert.equal(r.status, 422);
+    assert.ok(r.body.errors.cover);
+  });
+  await uji('PATCH terbit + ganti judul -> tampil di publik, slug tetap', async () => {
+    if (!siap() || !beritaUji) return 'lewat';
+    const r = await api(`/api/admin/berita/${beritaUji.id}`, json('PATCH', { status: 'terbit', title: 'Judul Baru Uji' }, admin));
+    assert.equal(r.status, 200);
+    assert.equal(r.body.data.slug, beritaUji.slug);
+    assert.equal(r.body.data.cover, beritaUji.cover, 'cover lama harus tetap');
+    const p = await api('/api/berita/' + beritaUji.slug);
+    assert.equal(p.status, 200);
+    assert.equal(p.body.data.title, 'Judul Baru Uji');
+    assert.deepEqual(p.body.data.content, ['Paragraf satu.', 'Paragraf dua.']);
+  });
+  await uji('PATCH "cover": null -> cover dihapus beserta filenya', async () => {
+    if (!siap() || !beritaUji) return 'lewat';
+    const r = await api(`/api/admin/berita/${beritaUji.id}`, json('PATCH', { cover: null }, admin));
+    assert.equal(r.status, 200);
+    assert.equal(r.body.data.cover, null);
+    assert.equal((await fetch(BASE + new URL(beritaUji.cover).pathname)).status, 404);
+  });
+  await uji('DELETE berita -> { data: { id } }, lalu 404', async () => {
+    if (!siap() || !beritaUji) return 'lewat';
+    const r = await api(`/api/admin/berita/${beritaUji.id}`, { method: 'DELETE', headers: admin });
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.body, { data: { id: beritaUji.id } });
+    assert.equal((await api(`/api/admin/berita/${beritaUji.id}`, { headers: admin })).status, 404);
+    beritaUji = null;
+  });
+
+  console.log('\n[Kontrak 11] Admin profil');
+  const fileProfil = require('../src/config').PROFIL_ADMIN_PATH;
+  const fs = require('fs');
+  const profilSemula = fs.existsSync(fileProfil) ? fs.readFileSync(fileProfil) : null;
+  await uji('PATCH profil tidak valid -> 422 (email, angka negatif, persen > 100)', async () => {
+    if (!siap()) return 'lewat';
+    const r = await api('/api/admin/profil', json('PATCH', {
+      kontak: { email: 'bukan-email' },
+      demografi: { jumlahPenduduk: -5, mataPencaharian: [{ nama: 'Petani', persen: 70 }, { nama: 'Pedagang', persen: 40 }] },
+    }, admin));
+    assert.equal(r.status, 422);
+    assert.ok(r.body.errors['kontak.email']);
+    assert.ok(r.body.errors['demografi.jumlahPenduduk']);
+    assert.ok(r.body.errors['demografi.mataPencaharian']);
+  });
+  await uji('PATCH profil sebagian -> bagian lain tidak berubah, langsung tampil di GET', async () => {
+    if (!siap()) return 'lewat';
+    const sebelum = (await api('/api/profil')).body.data;
+    const r = await api('/api/admin/profil', json('PATCH', {
+      visi: 'Visi uji otomatis',
+      demografi: { jumlahPenduduk: 1234, jumlahKK: 400, lakiLaki: 600, perempuan: 634, sebaranDusun: [{ nama: 'Dusun 1A', jumlah: 300 }], mataPencaharian: [{ nama: 'Petani', persen: 62.5 }] },
+    }, admin));
+    assert.equal(r.status, 200);
+    assert.equal(r.body.data.visi, 'Visi uji otomatis');
+    assert.equal(r.body.data.demografi.jumlahPenduduk, 1234);
+    assert.deepEqual(r.body.data.struktur, sebelum.struktur);
+    assert.deepEqual(r.body.data.misi, sebelum.misi);
+    assert.equal((await api('/api/profil')).body.data.visi, 'Visi uji otomatis');
+  });
+  if (profilSemula) fs.writeFileSync(fileProfil, profilSemula);
+  else fs.rmSync(fileProfil, { force: true });
 
   // Bersihkan sisa data uji.
   if (siap()) for (const id of dibuat) await api(`/api/admin/umkm/${id}`, { method: 'DELETE', headers: admin });

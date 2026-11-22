@@ -4,3 +4,4 @@ data/*.db
 data/*.db-*
 storage/umkm/*
 !storage/umkm/.gitkeep
+data/profil-admin.json
