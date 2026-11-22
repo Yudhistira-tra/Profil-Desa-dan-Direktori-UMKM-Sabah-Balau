@@ -20,8 +20,14 @@
 .hero {
   padding: 76px 0 92px;
   background:
+    linear-gradient(
+      100deg,
+      rgba(245, 248, 255, 0.96) 0%,
+      rgba(240, 245, 255, 0.9) 46%,
+      rgba(237, 243, 255, 0.58) 100%
+    ),
     radial-gradient(90% 90% at 85% 0%, rgba(111, 251, 190, 0.14), transparent 60%),
-    linear-gradient(180deg, #edf3ff 0%, #f5f8ff 100%);
+    url('../assets/gambar-halaman-utama.jpg') center / cover no-repeat;
 }
 
 .heroGrid {
@@ -161,57 +167,6 @@
   font-size: 11.5px;
   font-weight: 700;
   line-height: 1.35;
-}
-
-.heroMap {
-  width: 100%;
-  max-width: 500px;
-  margin-left: auto;
-  padding: 14px;
-  background: #ffffff;
-  border-radius: 22px;
-  box-shadow: 0 36px 70px -56px rgba(13, 28, 47, 0.65);
-}
-
-.heroMapCaption {
-  margin: 2px 0 10px 4px;
-  color: #56617a;
-  font-size: 11.5px;
-  font-weight: 600;
-}
-
-.heroMapFrame {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 5 / 4;
-  border-radius: 14px;
-  background: var(--primary-100);
-}
-
-.heroMapFrame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.heroPin {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  color: var(--ink);
-  font-size: 11.5px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 999px;
-  box-shadow: var(--shadow-sm);
-}
-
-.heroPin svg {
-  color: var(--accent-strong);
 }
 
 /* ============================ UMKM ============================ */
@@ -732,6 +687,86 @@
   color: var(--accent-strong);
 }
 
+/* ============================ BERITA ============================ */
+.newsSection {
+  padding: var(--section-y) 0;
+  background: #ffffff;
+}
+
+.newsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.newsCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  background: #f7f8ff;
+  border: 1px solid #e8ebfa;
+  border-radius: 18px;
+}
+
+.newsDate {
+  margin: 0;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.newsTitle {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.newsTitle a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.newsTitle a:hover {
+  color: var(--primary);
+}
+
+.newsExcerpt {
+  margin: 0;
+  color: var(--body);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.newsMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.newsMore:hover {
+  text-decoration: underline;
+}
+
+.newsState {
+  color: var(--body);
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .newsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ============================ CTA ============================ */
 .ctaSection {
   padding: 72px 0 92px;
@@ -819,10 +854,6 @@
     gap: 44px;
   }
 
-  .heroMap {
-    max-width: 440px;
-  }
-
   .stat {
     padding: 16px;
   }
@@ -836,15 +867,6 @@
 
   .heroCopy h1 {
     max-width: 640px;
-  }
-
-  .heroMap {
-    max-width: 100%;
-    margin-left: 0;
-  }
-
-  .heroMapFrame {
-    aspect-ratio: 16 / 9;
   }
 
   .cardGrid {
@@ -884,10 +906,6 @@
   .heroLead {
     margin-top: 16px;
     font-size: 14.5px;
-  }
-
-  .heroMapFrame {
-    aspect-ratio: 4 / 3;
   }
 
   .search {

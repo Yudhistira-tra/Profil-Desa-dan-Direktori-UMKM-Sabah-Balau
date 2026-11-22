@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { getBeritaTerbaru } from '../api/berita'
+import { profilDesaTampil } from '../api/profil'
 import { getUmkmList } from '../api/umkm'
 import Icon from '../components/Icon'
-import { profilDesa } from '../content/profilDesa'
 import styles from './Beranda.module.css'
+
+const formatTanggalBerita = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
 
 const formatRupiah = (value) =>
   new Intl.NumberFormat('id-ID', {
@@ -113,9 +120,23 @@ export default function Beranda() {
   const [daftarUmkm, setDaftarUmkm] = useState([])
   const [status, setStatus] = useState('memuat')
   const [percobaan, setPercobaan] = useState(0)
+  const [daftarBerita, setDaftarBerita] = useState([])
 
   useEffect(() => {
     document.title = 'Desa Sabah Balau — Profil Desa & Direktori UMKM'
+  }, [])
+
+  useEffect(() => {
+    let masihAktif = true
+
+    getBeritaTerbaru(3).then((data) => {
+      if (!masihAktif) return
+      setDaftarBerita(data)
+    })
+
+    return () => {
+      masihAktif = false
+    }
   }, [])
 
   useEffect(() => {
@@ -148,9 +169,13 @@ export default function Beranda() {
     setPercobaan((nilai) => nilai + 1)
   }
 
+  const profilDesa = profilDesaTampil()
   const umkmUnggulan = daftarUmkm.slice(0, 3)
   const jumlahUmkm = String(daftarUmkm.length).padStart(2, '0')
-  const jumlahPenduduk = formatAngka(profilDesa.demografi.jumlahPenduduk)
+  const jumlahPenduduk =
+    profilDesa.demografi.jumlahPenduduk != null
+      ? formatAngka(profilDesa.demografi.jumlahPenduduk)
+      : 'Belum tersedia'
 
   return (
     <>
@@ -211,22 +236,6 @@ export default function Beranda() {
                 </li>
               </ul>
             </div>
-
-            <figure className={styles.heroMap}>
-              <figcaption className={styles.heroMapCaption}>
-                Foto letak desa di maps
-              </figcaption>
-              <div className={styles.heroMapFrame}>
-                <img
-                  src="/images/peta-desa.svg"
-                  alt="Ilustrasi peta letak Desa Sabah Balau, Kecamatan Tanjung Bintang"
-                />
-                <span className={styles.heroPin}>
-                  <Icon name="mapPin" size={15} />
-                  Desa Sabah Balau
-                </span>
-              </div>
-            </figure>
           </div>
         </div>
       </section>
@@ -352,7 +361,9 @@ export default function Beranda() {
                 </span>
                 <div>
                   <p className={styles.mapStatLabel}>Luas Wilayah</p>
-                  <p className={styles.mapStatValue}>{profilDesa.geografis.luas}</p>
+                  <p className={styles.mapStatValue}>
+                    {profilDesa.geografis.luas ?? 'Belum tersedia'}
+                  </p>
                 </div>
               </div>
               <img
@@ -367,6 +378,47 @@ export default function Beranda() {
               </span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ============ BERITA TERBARU ============ */}
+      <section className={styles.newsSection} aria-labelledby="judul-berita">
+        <div className={styles.container}>
+          <div className={styles.sectionHead}>
+            <div>
+              <p className={styles.eyebrow}>Kabar Desa</p>
+              <h2 id="judul-berita">Berita Terbaru</h2>
+              <p className={styles.sectionDesc}>
+                Informasi dan kegiatan terbaru dari Desa Sabah Balau.
+              </p>
+            </div>
+            <Link className={styles.sectionAction} to="/berita">
+              Lihat Semua Berita
+              <Icon name="arrowRight" size={17} />
+            </Link>
+          </div>
+
+          {daftarBerita.length === 0 ? (
+            <p className={styles.newsState}>Memuat berita…</p>
+          ) : (
+            <div className={styles.newsGrid}>
+              {daftarBerita.map((berita) => (
+                <article className={styles.newsCard} key={berita.id}>
+                  <p className={styles.newsDate}>
+                    {formatTanggalBerita.format(new Date(berita.date))}
+                  </p>
+                  <h3 className={styles.newsTitle}>
+                    <Link to={`/berita/${berita.slug}`}>{berita.title}</Link>
+                  </h3>
+                  <p className={styles.newsExcerpt}>{berita.excerpt}</p>
+                  <Link to={`/berita/${berita.slug}`} className={styles.newsMore}>
+                    Baca selengkapnya
+                    <Icon name="arrowRight" size={15} />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

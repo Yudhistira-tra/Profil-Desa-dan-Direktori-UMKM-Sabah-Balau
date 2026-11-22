@@ -568,6 +568,13 @@
   margin-top: 22px;
 }
 
+.kosong {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 12px;
+  font-style: italic;
+}
+
 .sebaran h4 {
   color: var(--ink);
   font-size: 12px;

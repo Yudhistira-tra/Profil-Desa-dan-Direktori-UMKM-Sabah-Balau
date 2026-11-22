@@ -52,6 +52,11 @@ const DaftarUmkm = halamanFeB(() => import('./pages/Daftar.jsx'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin.jsx'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'))
 const AdminUmkmEdit = lazy(() => import('./pages/AdminUmkmEdit.jsx'))
+const AdminBerita = lazy(() => import('./pages/AdminBerita.jsx'))
+const AdminBeritaForm = lazy(() => import('./pages/AdminBeritaForm.jsx'))
+const AdminProfil = lazy(() => import('./pages/AdminProfil.jsx'))
+const Berita = lazy(() => import('./pages/Berita.jsx'))
+const BeritaDetail = lazy(() => import('./pages/BeritaDetail.jsx'))
 
 function HalamanMemuat() {
   return (
@@ -106,9 +111,15 @@ export default function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/umkm/:id" element={<AdminUmkmEdit />} />
+          <Route path="/admin/berita" element={<AdminBerita />} />
+          <Route path="/admin/berita/baru" element={<AdminBeritaForm />} />
+          <Route path="/admin/berita/:id" element={<AdminBeritaForm />} />
+          <Route path="/admin/profil" element={<AdminProfil />} />
           <Route element={<LayoutPublik />}>
             <Route path="/" element={<Beranda />} />
             <Route path="/profil" element={<ProfilDesa />} />
+            <Route path="/berita" element={<Berita />} />
+            <Route path="/berita/:slug" element={<BeritaDetail />} />
             <Route path="/umkm" element={<Direktori />} />
             <Route path="/umkm/:slug" element={<DetailUmkm />} />
             <Route path="/daftar-umkm" element={<DaftarUmkm />} />

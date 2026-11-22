@@ -102,7 +102,7 @@ Respons `201`:
 
 Pendaftaran **tidak langsung tampil** di direktori. Backend menyimpan dengan
 status `pending` dan admin desa menyetujui secara manual lewat halaman
-admin (lihat bagian 5–7 di bawah).
+admin (lihat bagian 4–6 dan 10–11 di bawah).
 
 Respons `422` (validasi):
 
@@ -136,7 +136,7 @@ Respons `200`:
 
 Respons `401`: `{ "message": "Login gagal" }`
 
-Semua endpoint di bagian 5–7 ditolak (`401`) tanpa sesi login yang valid.
+Semua endpoint di bagian 5, 6, 10, dan 11 ditolak (`401`) tanpa sesi login yang valid.
 
 ## 5. GET /api/admin/pendaftaran — **(USULAN)**
 
@@ -155,7 +155,7 @@ satu atau beberapa field yang diubah:
 | `status` | `pending` → `aktif` (tampil) atau `ditolak` |
 | `mapsUrl` | diisi admin (pemilik tidak mengisi lewat form) |
 | `products` | dilengkapi admin |
-| `images` | URL hasil upload foto (lihat bagian 9) |
+| `images` | URL hasil upload foto (lihat bagian 13) |
 | field UMKM lain | koreksi data |
 
 Respons `200`: `{ "data": { ...objek UMKM terbaru... } }`
@@ -195,7 +195,179 @@ Respons `200`:
 }
 ```
 
-## 8. Definisi field UMKM
+## 8. GET /api/berita — daftar berita terbit
+
+Dipakai halaman `/berita` dan section "Berita Terbaru" di Beranda (ambil 3
+teratas dari respons ini). Hanya berita berstatus `terbit`, urut `date`
+terbaru. Tanpa query param; pagination di frontend (6 kartu per halaman).
+
+Respons `200`:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "slug": "musyawarah-desa-program-2027",
+      "title": "Musyawarah Desa Bahas Program Prioritas 2027",
+      "excerpt": "Pemerintah desa bersama BPD ...",
+      "cover": null,
+      "date": "2026-11-18",
+      "sourceUrl": null
+    }
+  ]
+}
+```
+
+`content` tidak ikut di daftar; ambil di detail. `cover` berisi URL absolut
+atau `null` (UI menampilkan placeholder). `date` berformat `YYYY-MM-DD`.
+
+## 9. GET /api/berita/:slug — detail berita
+
+Respons `200`:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "slug": "musyawarah-desa-program-2027",
+    "title": "Musyawarah Desa Bahas Program Prioritas 2027",
+    "excerpt": "Pemerintah desa bersama BPD ...",
+    "content": [
+      "Paragraf pertama ...",
+      "Paragraf kedua ..."
+    ],
+    "cover": null,
+    "date": "2026-11-18",
+    "sourceUrl": null
+  }
+}
+```
+
+`content` adalah array paragraf (satu item = satu `<p>`). Jika `sourceUrl`
+berisi tautan (misalnya post Instagram atau situs berita lain), detail
+menampilkan tautan "Sumber" yang membuka tab baru.
+
+Respons `404` jika slug tidak ada **atau** beritanya masih `draf`.
+
+## 10. Admin: kelola berita — **(USULAN, menunggu keputusan backend)**
+
+Butuh sesi login (Bearer token) seperti bagian 5–6. Bentuk objek berita sama
+dengan bagian 8–9.
+
+| Method & path | Kegunaan |
+|---|---|
+| `GET /api/admin/berita` | semua berita (`terbit` + `draf`), urut `date` terbaru |
+| `GET /api/admin/berita/:id` | ambil satu berita untuk form edit (termasuk draf) |
+| `POST /api/admin/berita` | buat berita baru |
+| `PATCH /api/admin/berita/:id` | ubah berita |
+| `DELETE /api/admin/berita/:id` | hapus berita |
+
+`POST`/`PATCH` memakai `multipart/form-data` bila menyertakan foto utama
+(field `cover` bertipe file), dengan `data` berisi JSON objek berita. Tanpa
+foto, body boleh JSON biasa. Kirim `"cover": null` di `data` untuk
+menghapus foto saat edit.
+
+Respons `POST` → `201`, `PATCH`/`DELETE` → `200`, semuanya dibungkus
+`{ "data": ... }` (DELETE cukup `{ "data": { "id": 1 } }`). `404` bila id
+tidak ada, `422` bila validasi gagal.
+
+Field berita:
+
+| Field | Tipe | Wajib | Catatan |
+|---|---|---|---|
+| `slug` | string | — | dibuat backend dari `title`, unik; tidak berubah saat judul diedit |
+| `title` | string | ya | maks 150 karakter |
+| `date` | string | ya | `YYYY-MM-DD` |
+| `excerpt` | string | ya | ringkasan untuk kartu, maks 220 karakter |
+| `content` | string[] | ya | minimal 1 paragraf |
+| `cover` | string \| null | tidak | URL hasil upload (lihat bagian 13) |
+| `sourceUrl` | string \| null | tidak | diawali `http://`/`https://`; dipakai untuk berita kutipan IG/situs lain |
+| `status` | `draf` \| `terbit` | ya | default `draf`; hanya `terbit` tampil di publik |
+
+Catatan frontend: sementara ini halaman berita memakai data tiruan di
+`src/data/berita.js` + `src/api/berita.js`; setelah endpoint tersedia,
+modul API itu yang diganti `fetch` (halaman tidak perlu diubah).
+
+## 11. PATCH /api/admin/profil — **(USULAN, menunggu keputusan backend)**
+
+Butuh sesi login. Mengganti bagian profil desa yang dikirim. Bagian yang
+tidak dikirim tetap seperti sebelumnya, jadi frontend boleh mengirim semua
+bagian setiap kali menyimpan.
+
+Body (JSON) mengikuti bentuk GET /api/profil, ditambah field yang sudah
+dipakai frontend saat ini:
+
+```json
+{
+  "periode": "2020 – 2026",
+  "ringkasan": "Mengenal lebih dekat ...",
+  "jargon": "Pemerintah Desa Sabah Balau ...",
+  "sejarah": "Desa Sabah Balau berada di ...",
+  "visi": "Mewujudkan Desa Sabah Balau ...",
+  "misi": ["Meningkatkan ...", "Mengembangkan ..."],
+  "struktur": {
+    "pimpinan": {
+      "nama": "Pujianto, S.E.",
+      "jabatan": "Kepala Desa",
+      "unit": "Pimpinan Desa",
+      "deskripsi": "Memimpin penyelenggaraan ...",
+      "email": null,
+      "photoUrl": null
+    },
+    "perangkat": [
+      {
+        "nama": "Erpandi, S.Ag.",
+        "jabatan": "Sekretaris Desa",
+        "unit": "Sekretariat",
+        "deskripsi": "Mengelola administrasi ...",
+        "photoUrl": null
+      }
+    ]
+  },
+  "geografis": {
+    "luas": "12,5 km2",
+    "jumlahDusun": 3,
+    "batasUtara": "...",
+    "batasSelatan": "...",
+    "batasTimur": "...",
+    "batasBarat": "..."
+  },
+  "demografi": {
+    "jumlahPenduduk": 5200,
+    "jumlahKK": 1400,
+    "lakiLaki": 2650,
+    "perempuan": 2550,
+    "sebaranDusun": [
+      { "nama": "Dusun 1", "jumlah": 1800 }
+    ],
+    "mataPencaharian": [
+      { "nama": "Petani", "persen": 45 }
+    ]
+  },
+  "kontak": {
+    "alamat": "...",
+    "telepon": "...",
+    "email": "...",
+    "jamLayanan": "Senin – Jumat, 08.00 – 15.00 WIB"
+  }
+}
+```
+
+Perlu dikonfirmasi ke backend: `periode`, `ringkasan`, `jargon`,
+`geografis.jumlahDusun`, `demografi.lakiLaki`/`perempuan`/`sebaranDusun`/
+`mataPencaharian`, dan bentuk `struktur` di atas belum ada di contoh
+GET /api/profil (bagian 7). Usulnya GET ikut mengembalikan bentuk yang sama
+supaya satu sumber data.
+
+Respons `200`: `{ "data": { ...profil terbaru... } }`. `422` bila validasi
+gagal (`email` tidak valid, angka negatif, total `persen` > 100).
+
+Catatan frontend: sementara memakai `src/api/profil.js` (konten bawaan +
+simpanan `localStorage`) agar halaman Profil Desa dan Beranda ikut berubah
+setelah admin menyimpan.
+
+## 12. Definisi field UMKM
 
 | Field | Tipe | Wajib | Catatan |
 |---|---|---|---|
@@ -220,9 +392,8 @@ Catatan frontend:
 - Detail menampilkan galeri `images`, daftar `products`, `address` yang bisa
   diklik ke `mapsUrl`, dan `priceMin` sebagai "Harga Mulai".
 - Harga diformat `Intl.NumberFormat('id-ID')` → `Rp 15.000`.
-- Tombol "Bagikan" memakai Web Share API; tidak perlu field baru.
 
-## 9. Gambar
+## 13. Gambar
 
 - Respons API mengembalikan **URL absolut** (lengkap dengan domain).
 - Jika backend mengembalikan path relatif (`/uploads/...`), tulis di kontrak
@@ -231,7 +402,7 @@ Catatan frontend:
   (`/images/...`); ini hanya untuk development.
 - Jika `images` kosong, UI wajib punya fallback (bukan ikon gambar rusak).
 
-## 10. Status & error
+## 14. Status & error
 
 | Kode | Arti |
 |---|---|
@@ -241,7 +412,7 @@ Catatan frontend:
 | 422 | Validasi gagal (isinya `errors`) |
 | 500 | Error server, pesan umum |
 
-## 11. Keputusan terbuka
+## 15. Keputusan terbuka
 
 - [ ] Target submit Daftar UMKM: POST API / Google Form / WhatsApp
 - [ ] Base URL API saat production (subdomain? domain yang sama?)
@@ -251,10 +422,15 @@ Catatan frontend:
 - [ ] Desain halaman Daftar UMKM dan layout mobile (belum ada)
 - [x] Apakah `products` diisi pemilik lewat form atau dilengkapi admin →
       **dilengkapi admin** (13 November 2026); `mapsUrl` juga diisi admin
-- [ ] Endpoint admin (bagian 4–6): framework backend, siapa mengerjakan,
-      dan desain halaman `/admin` (belum ada)
+- [ ] Endpoint admin (bagian 4–6, 10, dan 11): siapa mengerjakan dan
+      kapan target selesainya
+- [ ] Field profil tambahan (bagian 11: `periode`, `ringkasan`, `jargon`,
+      `jumlahDusun`, `sebaranDusun`, `mataPencaharian`, `lakiLaki`/`perempuan`,
+      bentuk `struktur`) disepakati untuk GET dan PATCH
+- [ ] Format tanggal berita: cukup `YYYY-MM-DD` atau perlu jam (`ISO 8601`)?
+- [ ] Foto utama berita: wajib atau opsional (frontend sekarang opsional)
 
-## 12. Changelog
+## 16. Changelog
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
@@ -263,3 +439,4 @@ Catatan frontend:
 | 2 | 2026-11-05 | Hapus kategori total; tambah field detail: `images`, `products`, `priceMin`/`priceMax`, `saleType`, `ownerSince`, `address`, `mapsUrl`, `openingHours` |
 | 3 | 2026-11-05 | Hapus `priceMax` dan `saleType` dari desain |
 | 4 | 2026-11-13 | POST pendaftaran tambah `ownerSince`; `mapsUrl`/`products` diputuskan diisi admin; tambah usulan endpoint admin: login, daftar pending, approve/edit (bagian 4–6, menunggu keputusan backend) |
+| 5 | 2026-11-22 | Tambah portal berita: GET /api/berita, GET /api/berita/:slug (bagian 8–9), usulan admin CRUD berita (bagian 10), dan usulan PATCH /api/admin/profil (bagian 11). Nomor bagian 8–12 digeser menjadi 12–16 |

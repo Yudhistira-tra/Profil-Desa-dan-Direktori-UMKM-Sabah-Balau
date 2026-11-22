@@ -162,32 +162,24 @@ export const profilDesa = {
     ],
   },
 
+  // Data wilayah dan demografi belum tersedia dari desa; sengaja null/[] agar
+  // halaman menampilkan "Belum tersedia", bukan angka contoh.
   geografis: {
-    luas: '12,5 km²',
-    jumlahDusun: 4,
-    batasUtara: 'Desa Jati Baru',
-    batasSelatan: 'Desa Tanjung Bintang',
-    batasTimur: 'Desa Sukanegara',
-    batasBarat: 'Desa Budi Lestari',
+    luas: null,
+    jumlahDusun: null,
+    batasUtara: null,
+    batasSelatan: null,
+    batasTimur: null,
+    batasBarat: null,
   },
 
   demografi: {
-    jumlahPenduduk: 5200,
-    jumlahKK: 1400,
-    lakiLaki: 2650,
-    perempuan: 2550,
-    sebaranDusun: [
-      { nama: 'Dusun I', jumlah: 1380 },
-      { nama: 'Dusun II', jumlah: 1290 },
-      { nama: 'Dusun III', jumlah: 1310 },
-      { nama: 'Dusun IV', jumlah: 1220 },
-    ],
-    mataPencaharian: [
-      { nama: 'Petani/Pekebun', persen: 45 },
-      { nama: 'Pelaku UMKM', persen: 25 },
-      { nama: 'Karyawan/Swasta', persen: 20 },
-      { nama: 'ASN', persen: 10 },
-    ],
+    jumlahPenduduk: null,
+    jumlahKK: null,
+    lakiLaki: null,
+    perempuan: null,
+    sebaranDusun: [],
+    mataPencaharian: [],
   },
 
   kontak: {

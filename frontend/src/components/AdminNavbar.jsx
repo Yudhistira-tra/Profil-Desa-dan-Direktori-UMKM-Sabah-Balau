@@ -1,11 +1,18 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import styles from './AdminNavbar.module.css'
+
+const menu = [
+  { label: 'Dashboard', to: '/admin/dashboard' },
+  { label: 'Berita', to: '/admin/berita' },
+  { label: 'Profil Desa', to: '/admin/profil' },
+]
 
 function AdminNavbar({ adminName }) {
   const navigate = useNavigate()
 
   function handleLogout() {
     sessionStorage.removeItem('adminName')
+    sessionStorage.removeItem('adminToken')
     navigate('/admin')
   }
 
@@ -14,7 +21,15 @@ function AdminNavbar({ adminName }) {
       <div className={styles.inner}>
         <Link to="/admin/dashboard" className={styles.brand}>Desa Sabah Balau</Link>
         <nav className={styles.links}>
-          <Link to="/admin/dashboard" className={styles.active}>Dashboard</Link>
+          {menu.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => (isActive ? styles.active : styles.link)}
+            >
+              {item.label}
+            </NavLink>
+          ))}
           <Link to="/umkm" className={styles.link}>Direktori UMKM</Link>
         </nav>
         <div className={styles.right}>

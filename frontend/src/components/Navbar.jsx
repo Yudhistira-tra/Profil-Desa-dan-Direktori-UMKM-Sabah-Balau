@@ -6,6 +6,7 @@ import styles from './Navbar.module.css'
 const menu = [
   { label: 'Beranda', to: '/' },
   { label: 'Profil Desa', to: '/profil' },
+  { label: 'Berita', to: '/berita' },
   { label: 'Direktori UMKM', to: '/umkm' },
 ]
 

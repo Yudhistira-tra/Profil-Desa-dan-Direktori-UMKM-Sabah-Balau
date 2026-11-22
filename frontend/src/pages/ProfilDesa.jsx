@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import Icon from '../components/Icon'
-import { profilDesa } from '../content/profilDesa'
+import { profilDesaTampil } from '../api/profil'
 import styles from './ProfilDesa.module.css'
 
 const formatAngka = (value) => new Intl.NumberFormat('id-ID').format(value)
+
+const BELUM_TERSEDIA = 'Belum tersedia'
 
 const hitungPersen = (bagian, total) =>
   total > 0 ? Math.round((bagian / total) * 100) : 0
@@ -35,6 +37,7 @@ export default function ProfilDesa() {
     document.title = 'Profil Desa — Desa Sabah Balau'
   }, [])
 
+  const profilDesa = profilDesaTampil()
   const { demografi, geografis } = profilDesa
   const { pimpinan, perangkat } = profilDesa.struktur
 
@@ -42,7 +45,7 @@ export default function ProfilDesa() {
     (jumlah, dusun) => jumlah + dusun.jumlah,
     0,
   )
-  const totalPenduduk = totalDusun || demografi.jumlahPenduduk
+  const totalPenduduk = totalDusun || demografi.jumlahPenduduk || 0
   const persenLakiLaki = hitungPersen(demografi.lakiLaki, totalPenduduk)
   const persenPerempuan = hitungPersen(demografi.perempuan, totalPenduduk)
 
@@ -61,7 +64,9 @@ export default function ProfilDesa() {
               </span>
               <div>
                 <p className={styles.headStatLabel}>Luas Wilayah</p>
-                <p className={styles.headStatValue}>{geografis.luas}</p>
+                <p className={styles.headStatValue}>
+                  {geografis.luas ?? BELUM_TERSEDIA}
+                </p>
               </div>
             </li>
             <li className={styles.headStat}>
@@ -71,7 +76,9 @@ export default function ProfilDesa() {
               <div>
                 <p className={styles.headStatLabel}>Jumlah Penduduk</p>
                 <p className={styles.headStatValue}>
-                  {formatAngka(demografi.jumlahPenduduk)} Jiwa
+                  {demografi.jumlahPenduduk != null
+                    ? `${formatAngka(demografi.jumlahPenduduk)} Jiwa`
+                    : BELUM_TERSEDIA}
                 </p>
               </div>
             </li>
@@ -82,7 +89,9 @@ export default function ProfilDesa() {
               <div>
                 <p className={styles.headStatLabel}>Dusun</p>
                 <p className={styles.headStatValue}>
-                  {geografis.jumlahDusun} Dusun
+                  {geografis.jumlahDusun != null
+                    ? `${geografis.jumlahDusun} Dusun`
+                    : BELUM_TERSEDIA}
                 </p>
               </div>
             </li>
@@ -251,7 +260,9 @@ export default function ProfilDesa() {
               <div className={styles.demografiHead}>
                 <h3>Jumlah Penduduk</h3>
                 <span className={styles.kkPill}>
-                  {formatAngka(demografi.jumlahKK)} Kepala Keluarga
+                  {demografi.jumlahKK != null
+                    ? `${formatAngka(demografi.jumlahKK)} Kepala Keluarga`
+                    : BELUM_TERSEDIA}
                 </span>
               </div>
 
@@ -262,9 +273,13 @@ export default function ProfilDesa() {
                     Laki-laki
                   </p>
                   <p className={styles.genderValue}>
-                    {formatAngka(demografi.lakiLaki)}
+                    {demografi.lakiLaki != null
+                      ? formatAngka(demografi.lakiLaki)
+                      : BELUM_TERSEDIA}
                   </p>
-                  <p className={styles.genderPercent}>{persenLakiLaki}%</p>
+                  {totalPenduduk > 0 && (
+                    <p className={styles.genderPercent}>{persenLakiLaki}%</p>
+                  )}
                 </div>
                 <div className={styles.genderCard}>
                   <p className={styles.genderLabel}>
@@ -272,53 +287,65 @@ export default function ProfilDesa() {
                     Perempuan
                   </p>
                   <p className={styles.genderValue}>
-                    {formatAngka(demografi.perempuan)}
+                    {demografi.perempuan != null
+                      ? formatAngka(demografi.perempuan)
+                      : BELUM_TERSEDIA}
                   </p>
-                  <p className={styles.genderPercent}>{persenPerempuan}%</p>
+                  {totalPenduduk > 0 && (
+                    <p className={styles.genderPercent}>{persenPerempuan}%</p>
+                  )}
                 </div>
               </div>
 
               <div className={styles.sebaran}>
                 <h4>Sebaran Penduduk per Dusun:</h4>
-                <ul>
-                  {demografi.sebaranDusun.map((dusun, indeks) => {
-                    const persen = hitungPersen(dusun.jumlah, totalPenduduk)
+                {demografi.sebaranDusun.length === 0 ? (
+                  <p className={styles.kosong}>{BELUM_TERSEDIA}</p>
+                ) : (
+                  <ul>
+                    {demografi.sebaranDusun.map((dusun, indeks) => {
+                      const persen = hitungPersen(dusun.jumlah, totalPenduduk)
 
-                    return (
-                      <li key={dusun.nama}>
-                        <p className={styles.sebaranRow}>
-                          <span>{dusun.nama}</span>
-                          <span>
-                            {formatAngka(dusun.jumlah)} Jiwa ({persen}%)
+                      return (
+                        <li key={dusun.nama}>
+                          <p className={styles.sebaranRow}>
+                            <span>{dusun.nama}</span>
+                            <span>
+                              {formatAngka(dusun.jumlah)} Jiwa ({persen}%)
+                            </span>
+                          </p>
+                          <span className={styles.bar}>
+                            <span
+                              className={
+                                indeks % 2 === 0
+                                  ? styles.barUngu
+                                  : styles.barHijau
+                              }
+                              style={{ width: `${persen}%` }}
+                            />
                           </span>
-                        </p>
-                        <span className={styles.bar}>
-                          <span
-                            className={
-                              indeks % 2 === 0
-                                ? styles.barUngu
-                                : styles.barHijau
-                            }
-                            style={{ width: `${persen}%` }}
-                          />
-                        </span>
-                      </li>
-                    )
-                  })}
-                </ul>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
               </div>
             </div>
 
             <div className={styles.jobCard}>
               <h3>Mata Pencaharian Warga</h3>
-              <ul className={styles.jobGrid}>
-                {demografi.mataPencaharian.map((pekerjaan) => (
-                  <li className={styles.jobItem} key={pekerjaan.nama}>
-                    <p className={styles.jobPercent}>{pekerjaan.persen}%</p>
-                    <p className={styles.jobName}>{pekerjaan.nama}</p>
-                  </li>
-                ))}
-              </ul>
+              {demografi.mataPencaharian.length === 0 ? (
+                <p className={styles.kosong}>{BELUM_TERSEDIA}</p>
+              ) : (
+                <ul className={styles.jobGrid}>
+                  {demografi.mataPencaharian.map((pekerjaan) => (
+                    <li className={styles.jobItem} key={pekerjaan.nama}>
+                      <p className={styles.jobPercent}>{pekerjaan.persen}%</p>
+                      <p className={styles.jobName}>{pekerjaan.nama}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>
